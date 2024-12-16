@@ -1,7 +1,7 @@
-SRC = 	main.c		\
-		process.c	\
-		error.c		\
-		flag_help.c	\
+SRC = 	src/main.c		\
+		src/process.c	\
+		src/error.c		\
+		src/flag_help.c	\
 
 NAME = random
 
