@@ -1,24 +1,26 @@
 # My Random Char
 
 ## Description
-`My Random Char` est un projet en C qui genere un nombre de charactére au hasard
+`My Random Char` is a C project that generates random characters based on a given input number.
 
 ## Installation
-Pour compiler le projet, exécutez la commande suivante :
+To compile the project, run the following command :
 ```bash
 make
 ```
 
-## Utilisation
+## How to use
 ```bash
-./my_random_char <option>
+./random <number>
+```
+or 
+```bash
+./random -h
+Usage: ./my_random_char <number>
 Options:
-  -h : Affiche ce message d'aide
-  <option> : nombre de charactére à générer
+  -h        Display this help message
+  <number>  Process the given file
 ```
 
-## Exemple :
-```bash
-./my_random_char 50
-kl3of 37w08w3i5xk508bnnyiu lyarmljf6ymgybdy40s5 nv
-```
+## Author
+- vct-mrt
