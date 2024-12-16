@@ -2,8 +2,8 @@
 
 void flag_help(void)
 {
-    printf("Usage: ./my_random_char <option>\n");
+    printf("Usage: ./my_random_char <number>\n");
     printf("Options:\n");
-    printf("  -h          Display this help message\n");
-    printf("  <filename>  Process the given file\n");
+    printf("\t-h\tDisplay this help message\n");
+    printf("\t<number>\tProcess the given file\n");
 }
