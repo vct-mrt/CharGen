@@ -9,7 +9,7 @@ Pour compiler le projet, exécutez la commande suivante :
 make
 ```
 
-##Utilisation
+## Utilisation
 ```bash
 ./my_random_char <option>
 Options:
@@ -17,7 +17,7 @@ Options:
   <option> : nombre de charactére à générer
 ```
 
-##Exemple :
+## Exemple :
 ```bash
 ./my_random_char 50
 kl3of 37w08w3i5xk508bnnyiu lyarmljf6ymgybdy40s5 nv
