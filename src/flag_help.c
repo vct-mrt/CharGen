@@ -1,6 +1,9 @@
 #include "random_char.h"
 
-int flag_help(void)
+void flag_help(void)
 {
-    return 0;
+    printf("Usage: ./my_random_char <option>\n");
+    printf("Options:\n");
+    printf("  -h          Display this help message\n");
+    printf("  <filename>  Process the given file\n");
 }
