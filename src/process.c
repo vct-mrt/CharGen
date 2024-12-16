@@ -31,7 +31,7 @@ static int my_getnbr(char *nbr)
 
 int process(char *nbr)
 {
-    char alpha[] = "abcdefghijklmnopqrs tuvwxyz0123456789 ";
+    char alpha[] = "abcdefghijklmnopqrstuvwxyz0123456789 ";
     int i = 0;
     int ind = my_getnbr(nbr);
     int rand = -1;
