@@ -2,7 +2,7 @@
 
 int flag_help(void)
 {
-    printf("Usage: ./my_random_char <options> <number>\n");
+    printf("Usage: ./charRandomizer <options> <number>\n");
     printf("Options:\n");
     printf("\t-h\t\tDisplay this help message\n");
     printf("\t-n\t\tgenerates only numeric\n");
