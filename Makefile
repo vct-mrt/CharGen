@@ -9,18 +9,16 @@ NAME = random
 
 CPPFLAGS = -I include
 WFLAGS =  -W -Wall -Wextra
+OPTIFLAG = -O2
 
 all : $(NAME)
 $(NAME): $(SRC)
-	gcc -o $(NAME) $(SRC) $(WFLAGS) $(CPPFLAGS)
+	gcc -o $(NAME) $(SRC) $(WFLAGS) $(CPPFLAGS) $(OPTIFLAG)
 
 clean:
 	rm -f $(NAME)
 
 debug: CPPFLAGS += -g3
 debug: re
-
-opti: CPPFLAGS += -O2
-opti: re
 
 re: clean all
