@@ -8,7 +8,7 @@ int error(int ac, char **av)
     if (ac == 1)
         return 84;
     nbr = find_nbr(av);
-    if (is_nbr(nbr)) {
+    if (nbr != NULL && is_nbr(nbr)) {
         result = my_getnbr(nbr);
         if (result == INT_MAX || result == INT_MIN)
             return 84;
