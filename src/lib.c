@@ -14,19 +14,6 @@ int is_nbr(char *nbr)
     return 0;
 }
 
-char *to_choose(void)
-{
-    int ind = my_random(4);
-    if (ind == 1)
-        return ALPHA_MAJ;
-    if (ind == 2)
-        return ALPHA_MIN;
-    if (ind == 3)
-        return NUM;
-    else
-        return SPE_CHAR;
-}
-
 char *find_nbr(char **av)
 {
     for (int i = 0; av[i] != NULL; i++) {
