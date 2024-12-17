@@ -1,16 +1,49 @@
 #include "random_char.h"
 
+static flags_t init_flag(void)
+{
+    flags_t flags;
+
+    memset(&flags, 0, sizeof(flags));
+    flags.n = false;
+    flags.c = false;
+    flags.s = false;
+    flags.i = false;
+    flags.a = false;
+    return flags;
+}
+
+static char **init_list(flags_t flags)
+{
+    static char *list[5];
+    int ind = 0;
+
+    if (flags.n) {
+        list[ind] = NUM;
+        ind++;
+    } if (flags.c && flags.i) {
+        list[ind] = ALPHA_MIN;
+        ind++;
+    } if (flags.s) {
+        list[ind] = SPE_CHAR;
+        ind++;
+    } if (flags.c && flags.a) {
+        list[ind] = ALPHA_MAJ;
+        ind++;
+    }
+    if (flags.c && !flags.a && !flags.i) {
+        list[ind] = ALPHA_MIN;
+        ind++;
+    }
+    list[ind] = NULL;
+    return list;
+}
+
 int flag_manager(char **av)
 {
+    flags_t flags = init_flag();
     char *nbr = find_nbr(av);
-    bool flag_n = false;
-    bool flag_c = false;
-    bool flag_s = false;
-    bool flag_a = false;
-    bool flag_i = false;
-    int len = 0;
-    char *list[5];
-    int ind = 0;
+    char **list;
 
     for (int i = 0; av[i] != NULL; i++) {
         if (av[i][0] == '-' && av[i][1] == 'h')
@@ -18,43 +51,21 @@ int flag_manager(char **av)
         if (av[i][0] == '-') {
             for (int j = 0; av[i][j] != '\0'; j++) {
                 if (av[i][j] == 'n') {
-                    flag_n = true;
-                    len += 1;
+                    flags.n = true;
                 } else if (av[i][j] == 'c') {
-                    flag_c = true;
-                    len += 1;
+                    flags.c = true;
                 } else if (av[i][j] == 's') {
-                    flag_s = true;
-                    len += 1;
+                    flags.s = true;
                 } else if (av[i][j] == 'i') {
-                    flag_i = true;
-                    len += 1;
+                    flags.i = true;
                 } else if (av[i][j] == 'a') {
-                    flag_a = true;
-                    len += 1;
+                    flags.a = true;
                 }
             }
         }
     }
-    if (flag_n) {
-        list[ind] = NUM;
-        ind++;
-    } if (flag_c && flag_i) {
-        list[ind] = ALPHA_MIN;
-        ind++;
-    } if (flag_s) {
-        list[ind] = SPE_CHAR;
-        ind++;
-    } if (flag_c && flag_a) {
-        list[ind] = ALPHA_MAJ;
-        ind++;
-    }
-    if (flag_c && !flag_a && !flag_i) {
-        list[ind] = ALPHA_MIN;
-        ind++;
-    }
-    list[ind] = NULL;
-    if (!flag_n && !flag_c && !flag_s)
+    list = init_list(flags);
+    if (!flags.n && !flags.c && !flags.s)
         return process(nbr, create_tab());
     else
         return process(nbr, list);
