@@ -10,13 +10,18 @@
     #define SPE_CHAR " !'#$&()*+-,_./:;<>=?{}@ø£[~|]"
     #define NUM "0123456789"
 
-void flag_help(void);
+int flag_help(void);
 int my_random(int nb);
+int is_nbr(char *nbr);
+int is_nbr(char *nbr);
+char *to_choose(void);
 int process(char *nbr);
 int my_getnbr(char *nbr);
 int my_strlen(char *nbr);
+char *find_nbr(char **av);
+int flag_manager(char **av);
 int error(int ac, char **av);
+int handle_process(char *nbr, char *charac);
 char *to_choose(void);
-
 
 #endif //RANDOM_CHAR
