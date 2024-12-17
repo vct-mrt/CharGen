@@ -33,17 +33,33 @@ int my_strlen(char *nbr)
     return i;
 }
 
-char *to_choose(void)
+int my_tablen(char **tab)
 {
-    int ind = my_random(4);
-    if (ind == 1)
-        return ALPHA_MAJ;
-    if (ind == 2)
-        return ALPHA_MIN;
-    if (ind == 3)
-        return NUM;
-    else
-        return SPE_CHAR;
+    int ind = 0;
+
+    while(tab[ind] != NULL) {
+        ind++;
+    }
+    return ind;
+}
+
+char *to_choose(char **list)
+{
+    int ind = my_random(my_tablen(list));
+
+    return list[ind];
+}
+
+char **create_tab(void)
+{
+    static char *tab[5];
+
+    tab[0] = NUM;
+    tab[1] = SPE_CHAR;
+    tab[2] = ALPHA_MIN;
+    tab[3] = ALPHA_MAJ;
+    tab[4] = NULL;
+    return tab;
 }
 
 int my_getnbr(char *nbr)
