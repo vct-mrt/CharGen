@@ -46,6 +46,19 @@ int my_strlen(char *nbr)
     return i;
 }
 
+char *to_choose(void)
+{
+    int ind = my_random(4);
+    if (ind == 1)
+        return ALPHA_MAJ;
+    if (ind == 2)
+        return ALPHA_MIN;
+    if (ind == 3)
+        return NUM;
+    else
+        return SPE_CHAR;
+}
+
 int my_getnbr(char *nbr)
 {
     int nb = 0;
