@@ -9,7 +9,6 @@ NAME = charRandomizer
 
 CPPFLAGS = -I include
 WFLAGS =  -W -Wall -Wextra
-OPTIFLAG = -O2
 
 all : $(NAME)
 $(NAME): $(SRC)

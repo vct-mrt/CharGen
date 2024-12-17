@@ -11,6 +11,14 @@
     #define SPE_CHAR " !'#$&()*+-,_./:;<>=?{}@ø£[~|]"
     #define NUM "0123456789"
 
+typedef struct FLAGS {
+    bool n;
+    bool c;
+    bool s;
+    bool a;
+    bool i;
+} flags_t;
+
 int flag_help(void);
 int my_random(int nb);
 bool is_nbr(char *nbr);
