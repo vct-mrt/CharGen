@@ -19,6 +19,7 @@ typedef struct FLAGS {
     bool i;
 } flags_t;
 
+
 int flag_help(void);
 int my_random(int nb);
 bool is_nbr(char *nbr);
@@ -31,6 +32,7 @@ int flag_manager(char **av);
 char *to_choose(char **list);
 int error(int ac, char **av);
 int process(char *nbr, char **list);
+bool str_compare(char *str1, char *str2);
 
 
 #endif //RANDOM_CHAR
