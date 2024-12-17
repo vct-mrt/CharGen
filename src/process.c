@@ -2,16 +2,16 @@
 
 int process(char *nbr)
 {
-    char alpha[] = "abcdefghijklmnopqrstuvwxyz0123456789 ";
+    char *charac;
     int i = 0;
     int ind = my_getnbr(nbr);
     int rand = -1;
-    int len = my_strlen(alpha);
+    int len = my_strlen(charac);
 
     srand(time(NULL));
     while (i < ind) {
         rand = my_random(len);
-        printf("%c", alpha[rand]);
+        printf("%c", charac[rand]);
         if (i != 0 && i % 100 == 0)
             printf("\n");
         i++;
