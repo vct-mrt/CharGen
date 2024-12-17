@@ -5,6 +5,7 @@ int flag_manager(char **av)
     char *nbr = find_nbr(av);
     bool flag_a = false;
     bool flag_c = false;
+    bool flag_s = false;
     int len = 0;
     char *list[5];
     int ind = 0;
@@ -20,6 +21,9 @@ int flag_manager(char **av)
                 } else if (av[i][j] == 'c') {
                     flag_c = true;
                     len += 1;
+                } else if (av[i][j] == 's') {
+                    flag_s = true;
+                    len += 1;
                 }
             }
         }
@@ -30,9 +34,12 @@ int flag_manager(char **av)
     } if (flag_c) {
         list[ind] = ALPHA_MIN;
         ind++;
+    } if (flag_s) {
+        list[ind] = SPE_CHAR;
+        ind++;
     }
     list[ind] = NULL;
-    if (!flag_a && !flag_c)
+    if (!flag_a && !flag_c && !flag_s)
         return process(nbr, create_tab());
     else
         return process(nbr, list);
