@@ -5,7 +5,7 @@ SRC = 	src/main.c			\
 		src/flag_help.c		\
 		src/flag_manager.c	\
 
-NAME = random
+NAME = CharRandomizer
 
 CPPFLAGS = -I include
 WFLAGS =  -W -Wall -Wextra
