@@ -19,7 +19,7 @@ make
 ```bash
 ./random <number>
 ```
-or 
+or
 ```bash
 Usage: ./my_random_char <options> <number>
 Options:
