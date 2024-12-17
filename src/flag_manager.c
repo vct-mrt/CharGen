@@ -13,28 +13,31 @@ static flags_t init_flag(void)
     return flags;
 }
 
-static void add_flag_to_list(char **list, int *ind, const char *flag)
-{
-    list[*ind] = flag;
-    (*ind)++;
-}
-
 static char **init_list(flags_t flags)
 {
     static char *list[5];
     int ind = 0;
 
-    if (flags.n)
-        add_flag_to_list(list, &ind, NUM);
-    if (flags.c && flags.i)
-        add_flag_to_list(list, &ind, ALPHA_MIN);
-    if (flags.s)
-        add_flag_to_list(list, &ind, SPE_CHAR);
-    if (flags.c && flags.a)
-        add_flag_to_list(list, &ind, ALPHA_MAJ);
-    if (flags.c && !flags.a && !flags.i)
-        add_flag_to_list(list, &ind, ALPHA_MIN);
-
+    if (flags.n) {
+        list[ind] = NUM;
+        ind++;
+    }
+    if (flags.c && flags.i) {
+        list[ind] = ALPHA_MIN;
+        ind++;
+    }
+    if (flags.s) {
+        list[ind] = SPE_CHAR;
+        ind++;
+    }
+    if (flags.c && flags.a) {
+        list[ind] = ALPHA_MAJ;
+        ind++;
+    }
+    if (flags.c && !flags.a && flags.i) {
+        list[ind] = ALPHA_MIN;
+        ind++;
+    }
     list[ind] = NULL;
     return list;
 }
