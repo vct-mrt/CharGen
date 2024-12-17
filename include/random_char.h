@@ -22,6 +22,5 @@ char *find_nbr(char **av);
 int flag_manager(char **av);
 int error(int ac, char **av);
 int handle_process(char *nbr, char *charac);
-char *to_choose(void);
 
 #endif //RANDOM_CHAR
