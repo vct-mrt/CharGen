@@ -1,9 +1,15 @@
-# My Random Char
+## CharRandomizer
 
 ## Description
-`My Random Char` is a C project that generates random characters based on a given input number.
+`CharRandomizer` is a C project that generates random characters based on a given input number.
 
 ## Installation
+```bash
+cd requirement
+bash requirement.sh
+```
+
+## Compilation
 To compile the project, run the following command :
 ```bash
 make
@@ -15,11 +21,17 @@ make
 ```
 or 
 ```bash
-./random -h
-Usage: ./my_random_char <number>
+Usage: ./my_random_char <options> <number>
 Options:
-  -h        Display this help message
-  <number>  Process the given file
+	-h		Display this help message
+	-n		generates only numeric
+	-c		generates only letters of the alphabet
+	-s		generates only special characters
+	-i		letters are in lower case (required -c)
+	-a		letters are in upper case (required -c)
+	<number>	number of characters to generate
+By default :
+	[./my_random_char <number>] generates alpha numeric with special characters
 ```
 
 ## Author
