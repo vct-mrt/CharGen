@@ -2,19 +2,17 @@
 
 int error(int ac, char **av)
 {
-    char *nbr = av[1];
+    char *nbr;
     int result = -1;
 
     if (ac == 1)
         return 84;
-    if (ac > 2)
-        return 84;
-    for (int i = 0; nbr[i] != '\0'; i++) {
-        if ((nbr[i] < '0' || nbr[i] > '9') && nbr[i] != '-')
+    nbr = find_nbr(av);
+    if (is_nbr(nbr) == 0) {
+        result = my_getnbr(nbr);
+        if (result == INT_MAX || result == INT_MIN)
             return 84;
-    }
-    result = my_getnbr(nbr);
-    if (result == INT_MAX || result == INT_MIN)
+        return 0;
+    } else
         return 84;
-    return 0;
 }
