@@ -5,9 +5,11 @@ int flag_help(void)
     printf("Usage: ./my_random_char <options> <number>\n");
     printf("Options:\n");
     printf("\t-h\t\tDisplay this help message\n");
-    printf("\t-a\t\tgenerates only numeric\n");
+    printf("\t-n\t\tgenerates only numeric\n");
     printf("\t-c\t\tgenerates only letters of the alphabet\n");
     printf("\t-s\t\tgenerates only special characters\n");
+    printf("\t-i\t\tletters are in lower case (required -c)\n");
+    printf("\t-a\t\tletters are in upper case (required -c)\n");
     printf("\t<number>\tnumber of characters to generate\n");
     printf("By default :\n");
     printf("\t[./my_random_char <number>] generates alpha numeric with special characters\n");
