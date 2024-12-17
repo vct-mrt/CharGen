@@ -5,19 +5,19 @@ int my_random(int nb)
     return rand() % nb;
 }
 
-int is_nbr(char *nbr)
+bool is_nbr(char *nbr)
 {
     for (int i = 0; nbr[i] != '\0'; i++) {
         if (nbr[i] < 48 || nbr[i] > 57)
-            return 84;
+            return false;
     }
-    return 0;
+    return true;
 }
 
 char *find_nbr(char **av)
 {
     for (int i = 0; av[i] != NULL; i++) {
-        if (is_nbr(av[i]) == 0)
+        if (is_nbr(av[i]))
             return av[i];
     }
     return NULL;

@@ -20,6 +20,7 @@ clean:
 debug: CPPFLAGS += -g3
 debug: re
 
-re:
-	clean
-	all
+opti: CPPFLAGS += -O2
+opti: re
+
+re: clean all

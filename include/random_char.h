@@ -5,6 +5,7 @@
     #include <stdio.h>
     #include <time.h>
     #include <limits.h>
+    #include <stdbool.h>
     #define ALPHA_MIN "abcdefghijklmnopqrstuvwxyz"
     #define ALPHA_MAJ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     #define SPE_CHAR " !'#$&()*+-,_./:;<>=?{}@ø£[~|]"
@@ -12,8 +13,7 @@
 
 int flag_help(void);
 int my_random(int nb);
-int is_nbr(char *nbr);
-int is_nbr(char *nbr);
+bool is_nbr(char *nbr);
 char *to_choose(void);
 int process(char *nbr);
 int my_getnbr(char *nbr);
