@@ -13,7 +13,7 @@ OPTIFLAG = -O2
 
 all : $(NAME)
 $(NAME): $(SRC)
-	gcc -o $(NAME) $(SRC) $(WFLAGS) $(CPPFLAGS) $(OPTIFLAG)
+	gcc -o $(NAME) $(SRC) $(WFLAGS) $(CPPFLAGS)
 
 clean:
 	rm -f $(NAME)

@@ -14,13 +14,15 @@
 int flag_help(void);
 int my_random(int nb);
 bool is_nbr(char *nbr);
-char *to_choose(void);
-int process(char *nbr);
+char **create_tab(void);
 int my_getnbr(char *nbr);
 int my_strlen(char *nbr);
+int my_tablen(char **tab);
 char *find_nbr(char **av);
 int flag_manager(char **av);
+char *to_choose(char **list);
 int error(int ac, char **av);
-int handle_process(char *nbr, char *charac);
+int process(char *nbr, char **list);
+
 
 #endif //RANDOM_CHAR
