@@ -1,7 +1,7 @@
-## CharRandomizer
+## CharGen
 
 ## Description
-`CharRandomizer` is a C project that generates random characters based on a given input number.
+`CharGen` is a C project that generates random characters based on a given input number.
 
 ## Installation
 ```bash
@@ -17,11 +17,11 @@ make
 
 ## How to use
 ```bash
-./random <number>
+./chargen <number>
 ```
 or
 ```bash
-Usage: ./my_random_char <options> <number>
+Usage: ./chargen <options> <number>
 Options:
 	-h		Display this help message
 	-n		generates only numeric
@@ -31,7 +31,7 @@ Options:
 	-a		letters are in upper case (required -c)
 	<number>	number of characters to generate
 By default :
-	[./my_random_char <number>] generates alpha numeric with special characters
+	[./chargen <number>] generates alpha numeric with special characters
 ```
 
 ## Author
