@@ -5,7 +5,7 @@
 
 ## Requirement Installation
 ```bash
-
+git clone git@github.com:vct-mrt/CharGen.git
 cd requirement
 bash requirement.sh
 ```
