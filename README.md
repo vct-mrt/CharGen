@@ -3,8 +3,9 @@
 ## Description
 `CharGen` is a C project that generates random characters based on a given input number.
 
-## Installation
+## Requirement Installation
 ```bash
+
 cd requirement
 bash requirement.sh
 ```
