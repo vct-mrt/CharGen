@@ -6,6 +6,7 @@
 ## Installation
 ```bash
 git clone git@github.com:vct-mrt/CharGen.git
+cd Chargen
 bash requirement/requirement.sh
 make
 cp chargen /usr/local/bin
