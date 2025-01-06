@@ -9,7 +9,7 @@ git clone git@github.com:vct-mrt/CharGen.git
 cd CharGen
 bash requirement/requirement.sh
 make
-cp chargen /usr/local/bin
+sudo cp chargen /usr/local/bin
 alias chargen="/usr/local/bin/chargen"
 ```
 
