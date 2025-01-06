@@ -3,12 +3,15 @@
 ## Description
 `CharGen` is a C project that generates random characters based on a given input number.
 
-## Requirement Installation
+## Installation
 ```bash
 git clone git@github.com:vct-mrt/CharGen.git
-cd requirement
-bash requirement.sh
+bash requirement/requirement.sh
+make
+cp chargen /usr/local/bin
+alias chargen="/usr/local/bin/chargen"
 ```
+
 
 ## Compilation
 To compile the project, run the following command :
