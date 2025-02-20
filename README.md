@@ -12,7 +12,7 @@ make
 sudo cp chargen /usr/local/bin
 alias chargen="/usr/local/bin/chargen"
 cd ..
-rm -rf Chargen
+rm -rf CharGen
 ```
 
 
