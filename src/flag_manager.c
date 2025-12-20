@@ -22,21 +22,26 @@ static char **init_list(flags_t flags)
         list[ind] = NUM;
         ind++;
     }
-    if (flags.c && flags.i) {
-        list[ind] = ALPHA_MIN;
-        ind++;
-    }
     if (flags.s) {
         list[ind] = SPE_CHAR;
         ind++;
     }
-    if (flags.c && flags.a) {
-        list[ind] = ALPHA_MAJ;
-        ind++;
-    }
-    if (flags.c && !flags.a && flags.i) {
-        list[ind] = ALPHA_MIN;
-        ind++;
+    if (flags.c) {
+        if (flags.i) {
+            list[ind] = ALPHA_MIN;
+            ind++;
+        }
+        if (flags.a) {
+            list[ind] = ALPHA_MAJ;
+            ind++;
+        }
+        // Si ni -i ni -a, utiliser les deux
+        if (!flags.i && !flags.a) {
+            list[ind] = ALPHA_MIN;
+            ind++;
+            list[ind] = ALPHA_MAJ;
+            ind++;
+        }
     }
     list[ind] = NULL;
     return list;
@@ -51,6 +56,8 @@ int flag_manager(char **av)
     for (int i = 0; av[i] != NULL; i++) {
         if (str_compare(av[i], "-h") || str_compare(av[i], "--help"))
             return flag_help();
+        if (str_compare(av[i], "-v") || str_compare(av[i], "--version"))
+            return flag_version();
         if (av[i][0] == '-') {
             for (int j = 0; av[i][j] != '\0'; j++) {
                 if (av[i][j] == 'n') {

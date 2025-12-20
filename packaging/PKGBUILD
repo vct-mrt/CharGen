@@ -1,0 +1,22 @@
+# Maintainer: vct-mrt <your-email@example.com>
+pkgname=chargen
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Random character generator"
+arch=('x86_64' 'i686' 'aarch64' 'armv7h')
+url="https://github.com/vct-mrt/CharGen"
+license=('GPL3')
+depends=('glibc')
+makedepends=('gcc' 'make')
+source=("${pkgname}-${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "$pkgname-$pkgver"
+    make
+}
+
+package() {
+    cd "$pkgname-$pkgver"
+    make DESTDIR="$pkgdir" PREFIX=/usr install
+}
