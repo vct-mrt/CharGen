@@ -38,7 +38,7 @@ make install DESTDIR=%{buildroot} PREFIX=%{_prefix}
 %{_mandir}/man1/chargen.1*
 
 %changelog
-* Fri Dec 20 2025 vct-mrt <your-email@example.com> - 1.0.0-1
+* Fri Dec 20 2025 vct-mrt <martinetti.victor11@gmail.com> - 1.0.0-1
 - Initial RPM release
 - Random character generator with multiple options
 - Support for numeric, alphabetic, and special characters

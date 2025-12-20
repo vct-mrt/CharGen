@@ -36,6 +36,7 @@ echo ""
 
 # Build first
 echo "Building CharGen..."
+cd "$(dirname "$0")/.." || exit 1
 make clean > /dev/null 2>&1
 make > /dev/null 2>&1
 
