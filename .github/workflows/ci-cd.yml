@@ -25,15 +25,11 @@ jobs:
     - name: Build
       run: make
       
-    - name: Test basic functionality
+    - name: Run test suite
       run: |
-        ./chargen 10
-        ./chargen -n 8
-        ./chargen -ci 12
-        ./chargen -ca 15
-        ./chargen -ns 20
-        ./chargen --version
-        ./chargen --help
+        cd tests
+        chmod +x test.sh
+        ./test.sh
         
     - name: Upload binary
       uses: actions/upload-artifact@v3
@@ -41,9 +37,23 @@ jobs:
         name: chargen-binary
         path: chargen
 
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Install cppcheck
+      run: sudo apt-get install -y cppcheck
+      
+    - name: Run cppcheck
+      run: cppcheck --enable=all --suppress=missingIncludeSystem src/ include/
+
   build-packages:
     name: Build Packages
-    needs: build-and-test
+    needs: [build-and-test, code-quality]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     
@@ -78,17 +88,3 @@ jobs:
           dist/*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  lint:
-    name: Code Quality Check
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Install cppcheck
-      run: sudo apt-get install -y cppcheck
-      
-    - name: Run cppcheck
-      run: cppcheck --enable=all --suppress=missingIncludeSystem src/ include/
