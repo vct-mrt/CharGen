@@ -1,2 +1,41 @@
+# Build artifacts
 chargen
+*.o
+*.a
+*.so
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Package build directories
+build/
+dist/
+debian/
+*.deb
+*.rpm
+*.pkg.tar.*
+*.tar.gz
+*.tar.xz
+*.zip
+
+# RPM build
+~/rpmbuild/
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
 *.txt
+

@@ -1,0 +1,66 @@
+.TH CHARGEN 1 "December 2025" "CharGen 1.0.0" "User Commands"
+.SH NAME
+chargen \- random character generator
+.SH SYNOPSIS
+.B chargen
+[\fIOPTIONS\fR] \fINUMBER\fR
+.SH DESCRIPTION
+.B chargen
+generates random characters based on specified criteria. By default, it generates a mix of alphanumeric and special characters.
+.SH OPTIONS
+.TP
+.BR \-h ", " \-\-help
+Display help message and exit.
+.TP
+.BR \-v ", " \-\-version
+Display version information and exit.
+.TP
+.BR \-n
+Generate only numeric characters (0-9).
+.TP
+.BR \-c
+Generate only alphabetic characters (a-z, A-Z).
+.TP
+.BR \-s
+Generate only special characters.
+.TP
+.BR \-i
+Use lowercase letters only (requires \fB-c\fR).
+.TP
+.BR \-a
+Use uppercase letters only (requires \fB-c\fR).
+.SH ARGUMENTS
+.TP
+.I NUMBER
+The number of random characters to generate (must be a positive integer).
+.SH EXAMPLES
+.TP
+Generate 16 random characters with default settings:
+.B chargen 16
+.TP
+Generate 8 numeric characters:
+.B chargen -n 8
+.TP
+Generate 12 lowercase letters:
+.B chargen -ci 12
+.TP
+Generate 20 characters using numbers and special characters:
+.B chargen -ns 20
+.SH EXIT STATUS
+.TP
+.B 0
+Success
+.TP
+.B 84
+Error (invalid arguments, number out of range, etc.)
+.SH AUTHOR
+Written by vct-mrt.
+.SH COPYRIGHT
+Copyright \(co 2025 vct-mrt.
+.br
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+.SH SEE ALSO
+Full documentation and source code: <https://github.com/vct-mrt/CharGen>

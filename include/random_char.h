@@ -6,9 +6,11 @@
     #include <time.h>
     #include <limits.h>
     #include <stdbool.h>
+    
+    #define VERSION "1.0.0"
     #define ALPHA_MIN "abcdefghijklmnopqrstuvwxyz"
     #define ALPHA_MAJ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    #define SPE_CHAR " !'#$&()*+-,_./:;<>=?{}@ø£[~|]"
+    #define SPE_CHAR "!'#$%&()*+,-./:;<=>?@[\\]^_`{|}~"
     #define NUM "0123456789"
 
 typedef struct FLAGS {
@@ -21,6 +23,7 @@ typedef struct FLAGS {
 
 
 int flag_help(void);
+int flag_version(void);
 int my_random(int nb);
 bool is_nbr(char *nbr);
 char **create_tab(void);
