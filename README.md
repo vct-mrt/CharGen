@@ -19,21 +19,22 @@
 
 ### From Package Manager (Recommended)
 
-#### Debian/Ubuntu
-```bash
-sudo dpkg -i chargen_1.0.0-1_amd64.deb
-```
-
 #### Fedora/RHEL/CentOS
 ```bash
-sudo dnf install chargen-1.0.0-1.x86_64.rpm
-# or
-sudo rpm -i chargen-1.0.0-1.x86_64.rpm
+sudo dnf copr enable vct-mrt/chargen
+sudo dnf install chargen
 ```
 
-#### Arch Linux
+#### Ubuntu/Debian (Coming Soon)
 ```bash
-sudo pacman -U chargen-1.0.0-1-x86_64.pkg.tar.zst
+# PPA coming soon
+```
+
+#### Arch Linux (AUR)
+```bash
+yay -S chargen
+# or
+paru -S chargen
 ```
 
 ### From Source
@@ -111,25 +112,9 @@ chargen 16
 # Output: aB3$xY9!mK2@pL8%
 ```
 
-## Building Packages
+## For Maintainers
 
-To create distribution-specific packages:
-
-```bash
-cd packaging
-
-# Build Debian package
-./build-package.sh deb
-
-# Build RPM package
-./build-package.sh rpm
-
-# Build Arch package
-./build-package.sh arch
-
-# Build all packages
-./build-package.sh all
-```
+See [PACKAGING.md](PACKAGING.md) for information on building and distributing packages.
 
 ## Development
 
@@ -174,16 +159,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## Publishing to Repositories
 
-### PPA (Ubuntu/Debian)
-To publish to a Launchpad PPA, see [PACKAGING.md](PACKAGING.md) for detailed instructions.
-
-### AUR (Arch Linux)
-Submit the PKGBUILD to the Arch User Repository (AUR).
-
-### COPR (Fedora)
-Use Fedora COPR to distribute RPM packages.
 
 ## License
 
