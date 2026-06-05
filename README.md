@@ -1,7 +1,9 @@
 # CharGen
 
+[![CI](https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/vct-mrt/CharGen/releases)
+[![Language: C](https://img.shields.io/badge/language-C-blue.svg)]()
 
 ## Description
 

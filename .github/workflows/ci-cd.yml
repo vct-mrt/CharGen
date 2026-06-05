@@ -9,77 +9,140 @@ on:
     types: [ created ]
 
 jobs:
+  # ── Build, strict warnings, and tests ─────────────────────────────────────
   build-and-test:
-    name: Build and Test
+    name: Build and Test (${{ matrix.cc }})
     runs-on: ubuntu-latest
-    
+
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [ gcc, clang ]
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-      
+      uses: actions/checkout@v4
+
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential
-        
+        sudo apt-get install -y build-essential clang
+
+    # Normal build via make, overriding CC from the matrix.
+    # ASSUMPTION: Makefile uses plain `=` for CFLAGS and CC, so command-line
+    # overrides take precedence — verified in Makefile line 12-14.
     - name: Build
-      run: make
-      
+      run: make CC=${{ matrix.cc }}
+
     - name: Run test suite
       run: |
         cd tests
         chmod +x test.sh
         ./test.sh
-        
-    - name: Upload binary
-      uses: actions/upload-artifact@v3
+
+    # Strict build: re-compile with -Werror added. The Makefile uses plain `=`
+    # so passing CFLAGS on the command line overrides the Makefile value.
+    - name: Build with -Werror (strict)
+      run: |
+        make clean
+        make CC=${{ matrix.cc }} CFLAGS="-W -Wall -Wextra -O2 -Werror"
+
+    - name: Upload binary (${{ matrix.cc }})
+      uses: actions/upload-artifact@v4
       with:
-        name: chargen-binary
+        name: chargen-binary-${{ matrix.cc }}
         path: chargen
 
+  # ── Sanitizer job ──────────────────────────────────────────────────────────
+  sanitizers:
+    name: Sanitizers (ASan + UBSan)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential clang
+
+    # Direct compiler invocation so sanitizer flags are injected cleanly
+    # without relying on make CFLAGS override interacting with debug/release
+    # targets. Uses clang because its ASan/UBSan error messages are clearer;
+    # gcc works identically here.
+    - name: Build with sanitizers
+      run: |
+        clang -W -Wall -Wextra -O1 -g \
+          -fsanitize=address,undefined \
+          -fno-omit-frame-pointer \
+          -I include \
+          src/*.c -o chargen
+
+    - name: Run test suite under sanitizers
+      env:
+        ASAN_OPTIONS: detect_leaks=1:abort_on_error=1
+        UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+      run: |
+        cd tests
+        chmod +x test.sh
+        ./test.sh
+
+  # ── Code quality gate ──────────────────────────────────────────────────────
   code-quality:
     name: Code Quality Check
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Install cppcheck
-      run: sudo apt-get install -y cppcheck
-      
-    - name: Run cppcheck
-      run: cppcheck --enable=all --suppress=missingIncludeSystem src/ include/
+      uses: actions/checkout@v4
 
+    - name: Install cppcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cppcheck
+
+    # --error-exitcode=1 makes any finding fail the job.
+    # --inline-suppr allows per-line suppression comments in source if needed.
+    - name: Run cppcheck (blocking)
+      run: |
+        cppcheck \
+          --enable=all \
+          --inline-suppr \
+          --suppress=missingIncludeSystem \
+          --error-exitcode=1 \
+          src/ include/
+
+  # ── Release packaging ──────────────────────────────────────────────────────
   build-packages:
     name: Build Packages
-    needs: [build-and-test, code-quality]
+    needs: [build-and-test, sanitizers, code-quality]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
-    
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-      
+      uses: actions/checkout@v4
+
     - name: Install packaging tools
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential devscripts debhelper rpm
-        
+
     - name: Build Debian package
       run: |
         cp -r packaging/debian .
         dpkg-buildpackage -us -uc -b
         mkdir -p dist
         mv ../*.deb dist/
-        
+
     - name: Create source tarball
       run: |
         make clean
         cd ..
         tar czf chargen-${{ github.ref_name }}.tar.gz --exclude=.git CharGen/
         mv chargen-${{ github.ref_name }}.tar.gz CharGen/dist/
-        
+
     - name: Upload Release Assets
       uses: softprops/action-gh-release@v1
       with:

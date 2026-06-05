@@ -2,7 +2,17 @@
 
 int my_random(int nb)
 {
-    return rand() % nb;
+    unsigned int limit;
+    unsigned int r;
+
+    if (nb <= 0)
+        return 0;
+    limit = (unsigned int)RAND_MAX + 1u;
+    limit -= limit % (unsigned int)nb;
+    do {
+        r = (unsigned int)rand();
+    } while (r >= limit);
+    return (int)(r % (unsigned int)nb);
 }
 
 bool is_nbr(char *nbr)

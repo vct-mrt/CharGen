@@ -1,146 +1,65 @@
 # Contributing to CharGen
 
-First off, thank you for considering contributing to CharGen! It's people like you that make CharGen such a great tool.
+Thank you for your interest in contributing to CharGen — a small, focused CLI tool that generates random strings from selectable character sets. Contributions of all kinds are welcome: bug reports, fixes, tests, and documentation improvements.
 
-## Code of Conduct
-
-This project and everyone participating in it is governed by a code of conduct of respect and professionalism. By participating, you are expected to uphold this code.
-
-## How Can I Contribute?
-
-### Reporting Bugs
-
-Before creating bug reports, please check the existing issues to avoid duplicates. When creating a bug report, include as many details as possible:
-
-- **Use a clear and descriptive title**
-- **Describe the exact steps to reproduce the problem**
-- **Provide specific examples**
-- **Describe the behavior you observed and what you expected**
-- **Include your environment details** (OS, version, etc.)
-
-### Suggesting Enhancements
-
-Enhancement suggestions are tracked as GitHub issues. When creating an enhancement suggestion:
-
-- **Use a clear and descriptive title**
-- **Provide a detailed description of the suggested enhancement**
-- **Explain why this enhancement would be useful**
-- **List any similar features in other tools**
-
-### Pull Requests
-
-1. Fork the repo and create your branch from `main`
-2. If you've added code, add tests
-3. Ensure the test suite passes
-4. Make sure your code follows the existing style
-5. Write a clear commit message
-
-## Development Setup
+## Dev Setup
 
 ```bash
 git clone https://github.com/vct-mrt/CharGen.git
 cd CharGen
 make
-./test.sh
 ```
 
-## Coding Standards
-
-- Follow the existing code style
-- Comment your code where necessary
-- Keep functions small and focused
-- Use meaningful variable names
-- Handle errors appropriately
-
-### C Style Guidelines
-
-- Use 4 spaces for indentation (not tabs)
-- Opening braces on the same line for functions
-- Use `snake_case` for function names
-- Use `UPPER_CASE` for constants
-- Always check return values
-- Free allocated memory
-
-Example:
-```c
-int my_function(char *input)
-{
-    if (input == NULL) {
-        return -1;
-    }
-    
-    // Function logic here
-    return 0;
-}
-```
-
-## Testing
-
-Run the test suite before submitting:
+Run the test suite:
 
 ```bash
-./test.sh
+cd tests && ./test.sh
+# or, from the project root:
+make check
 ```
 
-Add tests for new features:
-1. Add test cases to `test.sh`
-2. Ensure all tests pass
-3. Test on multiple platforms if possible
+Install build dependencies on your distro automatically:
 
-## Documentation
-
-- Update README.md if you change functionality
-- Update man page (chargen.1) for new options
-- Add comments for complex logic
-- Update PACKAGING.md for packaging changes
-
-## Commit Messages
-
-- Use the present tense ("Add feature" not "Added feature")
-- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-- Limit the first line to 72 characters
-- Reference issues and pull requests
-
-Example:
-```
-Add support for hexadecimal character generation
-
-- Add -x flag for hex output
-- Update help message
-- Add tests for hex generation
-
-Fixes #42
+```bash
+bash requirement/requirement.sh
 ```
 
-## Release Process
+`requirement.sh` detects the package manager (apt, dnf, pacman, …) and installs `gcc`, `make`, and `cppcheck`.
 
-1. Update version in:
-   - `include/random_char.h` (VERSION constant)
-   - `Makefile`
-   - `packaging/debian/changelog`
-   - `packaging/chargen.spec`
-   - `packaging/PKGBUILD`
+## Coding Style
 
-2. Update CHANGELOG.md
+CharGen follows C99 and Epitech-derived conventions:
 
-3. Create and push tag:
-   ```bash
-   git tag -a v1.0.0 -m "Release v1.0.0"
-   git push origin v1.0.0
-   ```
+- **Error sentinel**: functions return `84` on error, `0` on success. This propagates as the process exit code.
+- **Hand-rolled libc**: `my_strlen`, `str_compare`, `my_getnbr`, etc. are kept deliberately — do not replace them with stdlib equivalents.
+- **Indentation**: 4 spaces (no tabs in C/H files). See `.editorconfig`.
+- **Compiler cleanliness**: code must compile without warnings under `-W -Wall -Wextra -O2`. CI enforces `-Werror` in addition.
+- **Static analysis**: `cppcheck --enable=all` must report zero findings. The CI pipeline blocks on any finding.
+- **Sanitizers**: CI builds with `-fsanitize=address,undefined`. New code must be clean under ASan/UBSan.
+- **Security caveat**: CharGen uses `rand()` and is **not** cryptographically secure. Do not add features that imply security guarantees, and do not remove the warnings in README and SECURITY.md.
 
-4. Build packages:
-   ```bash
-   cd packaging
-   ./build-package.sh all
-   ```
+## Versioning
 
-5. Create GitHub release with packages
+The version string lives in **three places** — keep them in sync when bumping:
 
-## Questions?
+1. `Makefile` — `VERSION` variable.
+2. `include/random_char.h` — `VERSION` macro.
+3. `README.md` — version badge.
 
-Feel free to open an issue with the label `question`.
+Also update `CHANGELOG.md`: move items from `## [Unreleased]` to a new numbered section, and add a comparison URL at the bottom.
+
+## Pull Request Process
+
+1. Branch from `main` (e.g. `fix/modulo-bias`, `feat/make-dist`).
+2. Ensure `make check` passes and `cppcheck` reports no findings.
+3. Use conventional commit messages (`fix:`, `feat:`, `docs:`, `chore:`, etc.).
+4. Fill in the PR description with what changed and why.
+5. One logical change per PR — keep diffs reviewable.
+
+## Reporting Bugs
+
+Open a GitHub issue. Include: OS and distro, compiler version (`gcc --version`), exact command run, expected vs. actual output, and exit code.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the GPL-3.0 License.
+By contributing you agree that your changes will be released under the [GPL-3.0 License](LICENSE).

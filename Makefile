@@ -1,5 +1,6 @@
 # Makefile for CharGen
 VERSION = 1.0.0
+DISTNAME = chargen-$(VERSION)
 
 SRC = 	src/main.c			\
 		src/lib.c			\
@@ -42,10 +43,19 @@ uninstall:
 
 clean:
 	rm -f $(NAME)
+	rm -f chargen-*.tar.gz
 
 debug: CFLAGS += -g3 -DDEBUG
 debug: clean $(NAME)
 
 re: clean all
 
-.PHONY: all clean install uninstall debug re
+# Run the test suite (builds first)
+check: all
+	cd tests && ./test.sh
+
+# Source tarball from committed HEAD (excludes .git and build artifacts)
+dist:
+	git archive --format=tar.gz --prefix=$(DISTNAME)/ -o $(DISTNAME).tar.gz HEAD
+
+.PHONY: all clean install uninstall debug re check dist
