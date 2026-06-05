@@ -1,10 +1,18 @@
 # Security Policy
 
-## Important: CharGen Is NOT Cryptographically Secure
+## Random Number Generation — Default vs. Secure Mode
 
-**CharGen uses libc `rand()` and is NOT cryptographically secure. Its output is statistically predictable and MUST NOT be used to generate passwords, tokens, API keys, cryptographic keys, nonces, or any other security-sensitive secret.**
+### Default mode (rand()) — NOT cryptographically secure
 
-If you need a cryptographically secure random string, use one of the following instead:
+**CharGen's default mode uses libc `rand()` and is NOT cryptographically secure. Its output is statistically predictable and MUST NOT be used to generate passwords, tokens, API keys, cryptographic keys, nonces, or any other security-sensitive secret.**
+
+This is a deliberate design constraint of the default mode, not a bug. It is documented in the README and targets development/testing use cases only.
+
+### Secure mode (--secure) — suitable for secrets
+
+Passing `--secure` makes CharGen source randomness from `getrandom()`/`/dev/urandom`, which IS suitable for generating passwords, tokens, and other secrets. Without `--secure`, output remains `rand()`-based, statistically predictable, and unsuitable for security use.
+
+If you prefer dedicated tools regardless of mode, the following remain good alternatives:
 
 | Tool | Example |
 |------|---------|
@@ -12,8 +20,6 @@ If you need a cryptographically secure random string, use one of the following i
 | `pwgen` | `pwgen -s 32 1` |
 | `/dev/urandom` | `head -c 32 /dev/urandom | base64` |
 | `python3 secrets` | `python3 -c "import secrets; print(secrets.token_urlsafe(32))"` |
-
-This is a deliberate design constraint of CharGen, not a bug. It is documented in the README and will not be changed without a major version bump and prominent warnings.
 
 ## Supported Versions
 
@@ -47,6 +53,5 @@ This is a hobby/personal project maintained on a best-effort basis. You can expe
 
 ### Out of scope (by design)
 
-- The use of `rand()` for random number generation. This is documented and intentional. CharGen is a development/testing utility, not a security tool.
-- Lack of a cryptographically secure mode. See above — use `openssl rand` or `pwgen` instead.
-- Predictability of output. Predictability is a known and accepted property of this tool.
+- The use of `rand()` for random number generation in the default mode. This is documented and intentional. Use `--secure` or a dedicated tool when security is required.
+- Predictability of output in default (non-`--secure`) mode. Predictability is a known and accepted property of the default mode.

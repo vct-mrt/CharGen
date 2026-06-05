@@ -76,6 +76,7 @@ chargen [options] <number>
 | `-s` | Generate only special characters |
 | `-i` | Use lowercase letters (requires `-c`) |
 | `-a` | Use uppercase letters (requires `-c`) |
+| `--secure` | Use a cryptographically secure RNG (getrandom) — suitable for passwords/tokens |
 
 ### Examples
 
@@ -112,6 +113,16 @@ Generate a strong password (16 chars, all types):
 ```bash
 chargen 16
 # Output: aB3$xY9!mK2@pL8%
+```
+
+Generate a cryptographically secure 16-character string (password/token grade):
+```bash
+chargen --secure 16
+```
+
+Generate a secure 20-character alphabetic string:
+```bash
+chargen --secure -c 20
 ```
 
 ## For Maintainers
@@ -178,4 +189,4 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ---
 
-**Note**: For security-critical applications (like password generation), consider using dedicated tools like `pwgen` or `openssl rand`. CharGen uses the standard C `rand()` function which is suitable for general purposes but may not be cryptographically secure.
+**Note**: CharGen's default mode uses the standard C `rand()` function, which is suitable for general purposes (test data, random strings) but is **not** cryptographically secure. For security-critical output, use the `--secure` flag, which sources randomness from `getrandom()`/`/dev/urandom` instead of `rand()` and is suitable for passwords and tokens. If you prefer dedicated tools, `pwgen` and `openssl rand` remain good alternatives.

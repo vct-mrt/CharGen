@@ -1,4 +1,8 @@
+#define _GNU_SOURCE
 #include "random_char.h"
+#include <sys/random.h>
+#include <fcntl.h>
+#include <errno.h>
 
 int my_random(int nb)
 {
@@ -12,6 +16,45 @@ int my_random(int nb)
     do {
         r = (unsigned int)rand();
     } while (r >= limit);
+    return (int)(r % (unsigned int)nb);
+}
+
+int my_secure_random(int nb)
+{
+    unsigned int r;
+    unsigned int limit;
+    unsigned char buf[4];
+    ssize_t ret;
+    int fd;
+
+    if (nb <= 0)
+        return 0;
+    limit = UINT_MAX - (UINT_MAX % (unsigned int)nb);
+    do {
+        /* Try getrandom(), retrying on EINTR. */
+        do {
+            ret = getrandom(buf, sizeof(buf), 0);
+        } while (ret == -1 && errno == EINTR);
+
+        if (ret == -1) {
+            /* Fallback: read from /dev/urandom. */
+            fd = open("/dev/urandom", O_RDONLY);
+            if (fd == -1) {
+                fprintf(stderr, "chargen: secure RNG unavailable\n");
+                exit(84);
+            }
+            ret = read(fd, buf, sizeof(buf));
+            close(fd);
+            if (ret != (ssize_t)sizeof(buf)) {
+                fprintf(stderr, "chargen: secure RNG unavailable\n");
+                exit(84);
+            }
+        }
+        r = ((unsigned int)buf[0])
+          | ((unsigned int)buf[1] << 8)
+          | ((unsigned int)buf[2] << 16)
+          | ((unsigned int)buf[3] << 24);
+    } while (r > limit);
     return (int)(r % (unsigned int)nb);
 }
 

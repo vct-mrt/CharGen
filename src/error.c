@@ -33,7 +33,10 @@ int error(int ac, char **av)
     for (int i = 1; i < ac; i++) {
         if (av[i][0] == '-') {
             if (av[i][1] == '-') {
-                /* Long option: only --help and --version are valid (already caught above). */
+                /* Long options: --help, --version (caught above), --secure are valid. */
+                if (str_compare(av[i], "--secure")) {
+                    continue;
+                }
                 fprintf(stderr, "chargen: unrecognized option '%s'\n", av[i]);
                 fprintf(stderr, "Try 'chargen --help' for more information.\n");
                 return 84;

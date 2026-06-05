@@ -329,6 +329,59 @@ test_stderr_contains \
     84
 
 # ===========================================================================
+# --secure flag tests
+# ===========================================================================
+echo ""
+echo "Testing --secure flag..."
+
+# 1. --secure 20: exit 0 and exactly 20 chars
+test_length \
+    "--secure 20 produces exactly 20 chars" \
+    "./chargen --secure 20" \
+    20
+
+# 2. --secure 50: exit 0 and exactly 50 chars (confirms it runs cleanly)
+test_length \
+    "--secure 50 produces exactly 50 chars" \
+    "./chargen --secure 50" \
+    50
+
+# 3. --secure -n 40: numbers only
+test_output_matches \
+    "--secure -n 40 output matches [0-9]+" \
+    "./chargen --secure -n 40" \
+    '^[0-9]+$'
+
+# 4. --secure -c 40: letters only
+test_output_matches \
+    "--secure -c 40 output matches [a-zA-Z]+" \
+    "./chargen --secure -c 40" \
+    '^[a-zA-Z]+$'
+
+# 5. --secure -ci 40: lowercase only
+test_output_matches \
+    "--secure -ci 40 output matches [a-z]+" \
+    "./chargen --secure -ci 40" \
+    '^[a-z]+$'
+
+# 6. Uniqueness: two invocations of --secure 30 differ
+test_outputs_differ \
+    "Two back-to-back './chargen --secure 30' differ (secure RNG uniqueness)" \
+    "./chargen --secure 30"
+
+# 7. Order independence: flag after count
+test_length \
+    "Count before flag: './chargen 12 --secure' produces 12 chars" \
+    "./chargen 12 --secure" \
+    12
+
+# 8. --secure 10: stderr is empty (flag is not rejected as unknown)
+test_command \
+    "--secure 10 exits 0 (flag accepted)" \
+    "./chargen --secure 10" \
+    0
+
+# ===========================================================================
 # Summary
 # ===========================================================================
 echo ""

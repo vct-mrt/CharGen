@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `--secure` flag: opt-in cryptographically secure RNG (getrandom with /dev/urandom fallback) for password/token-grade output.
 - `make check` target (runs `tests/test.sh`) and `make dist` target (source tarball).
 - Debian packaging under `packaging/debian/` (control, rules, changelog, compat).
 - Governance files: `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `.editorconfig`.

@@ -29,6 +29,14 @@ Use lowercase letters only (requires \fB-c\fR).
 .TP
 .BR \-a
 Use uppercase letters only (requires \fB-c\fR).
+.TP
+.BR \-\-secure
+Use a cryptographically secure RNG instead of libc \fBrand\fR(3).
+Randomness is sourced via \fBgetrandom\fR(2); if unavailable, falls back to
+\fI/dev/urandom\fR.
+Suitable for generating passwords, tokens, and other secrets.
+The default mode (without this flag) remains \fBrand\fR(3)-based and is NOT
+cryptographically secure.
 .SH ARGUMENTS
 .TP
 .I NUMBER
@@ -46,6 +54,12 @@ Generate 12 lowercase letters:
 .TP
 Generate 20 characters using numbers and special characters:
 .B chargen -ns 20
+.TP
+Generate a cryptographically secure 16-character string:
+.B chargen --secure 16
+.TP
+Generate a secure 20-character alphabetic string:
+.B chargen --secure -c 20
 .SH EXIT STATUS
 .TP
 .B 0

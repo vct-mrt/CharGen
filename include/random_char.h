@@ -22,6 +22,7 @@ typedef struct FLAGS {
     bool s;
     bool a;
     bool i;
+    bool secure;
 } flags_t;
 
 
@@ -31,6 +32,8 @@ int flag_help(void);
 int flag_version(void);
 /* Unbiased random integer in [0, nb); returns 0 if nb <= 0. */
 int my_random(int nb);
+/* Unbiased CSPRNG value in [0, nb) via getrandom(); falls back to /dev/urandom. */
+int my_secure_random(int nb);
 /* Returns true if every character of nbr is a decimal digit. */
 bool is_nbr(char *nbr);
 /* Returns the default char-set table (all four sets, NULL-terminated). */
@@ -50,7 +53,7 @@ char *to_choose(char **list);
 /* Validate argc/argv; returns 84 on any error, 0 if arguments are valid. */
 int error(int ac, char **av);
 /* Generate nbr random characters from list, printing LINE_WIDTH per line. */
-int process(char *nbr, char **list);
+int process(char *nbr, char **list, flags_t flags);
 /* Returns true if str1 and str2 are identical (reimplementation of strcmp==0). */
 bool str_compare(char *str1, char *str2);
 

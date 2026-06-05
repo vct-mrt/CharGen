@@ -11,7 +11,8 @@ int flag_help(void)
     printf("  -c             Generate only alphabetic characters\n");
     printf("  -s             Generate only special characters\n");
     printf("  -i             Use lowercase letters (with -c)\n");
-    printf("  -a             Use uppercase letters (with -c)\n\n");
+    printf("  -a             Use uppercase letters (with -c)\n");
+    printf("  --secure       Use a cryptographically secure RNG (getrandom)\n\n");
     printf("Arguments:\n");
     printf("  <number>       Number of characters to generate\n\n");
     printf("Examples:\n");

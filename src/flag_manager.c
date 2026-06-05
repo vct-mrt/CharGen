@@ -10,6 +10,7 @@ static flags_t init_flag(void)
     flags.s = false;
     flags.i = false;
     flags.a = false;
+    flags.secure = false;
     return flags;
 }
 
@@ -58,6 +59,12 @@ int flag_manager(char **av)
             return flag_help();
         if (str_compare(av[i], "-v") || str_compare(av[i], "--version"))
             return flag_version();
+        if (av[i][0] == '-' && av[i][1] == '-') {
+            /* Long options handled here; --help/--version already caught above. */
+            if (str_compare(av[i], "--secure"))
+                flags.secure = true;
+            continue;
+        }
         if (av[i][0] == '-') {
             for (int j = 0; av[i][j] != '\0'; j++) {
                 if (av[i][j] == 'n') {
@@ -76,7 +83,7 @@ int flag_manager(char **av)
     }
     list = init_list(flags);
     if (!flags.n && !flags.c && !flags.s)
-        return process(nbr, create_tab());
+        return process(nbr, create_tab(), flags);
     else
-        return process(nbr, list);
+        return process(nbr, list, flags);
 }

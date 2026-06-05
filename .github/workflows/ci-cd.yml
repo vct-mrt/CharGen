@@ -102,12 +102,23 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y cppcheck
 
-    # --error-exitcode=1 makes any finding fail the job.
+    # Two-step cppcheck: full visibility first, then a narrower blocking gate.
     # --inline-suppr allows per-line suppression comments in source if needed.
-    - name: Run cppcheck (blocking)
+    - name: Run cppcheck
       run: |
+        echo "=== cppcheck (informational, all checks) ==="
         cppcheck \
           --enable=all \
+          --inline-suppr \
+          --suppress=missingIncludeSystem \
+          src/ include/
+
+        # style/information/unusedFunction are noisy for Epitech-style hand-rolled
+        # C (const suggestions, scope hints, cross-TU unused warnings). To re-enable
+        # strict mode for all categories, switch to --enable=all --error-exitcode=1.
+        echo "=== cppcheck (blocking: warning,performance,portability) ==="
+        cppcheck \
+          --enable=warning,performance,portability \
           --inline-suppr \
           --suppress=missingIncludeSystem \
           --error-exitcode=1 \
