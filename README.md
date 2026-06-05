@@ -13,7 +13,7 @@
 - ⚡ **Fast and lightweight**: minimal dependencies, efficient C implementation
 - 🎯 **Flexible options**: combine different character types as needed
 - 📦 **Easy installation**: available for Debian, Fedora/RHEL, and Arch Linux
-- 🔒 **Secure**: uses system random number generator
+- 🔧 **Single binary**: zero external dependencies beyond libc, easy to deploy
 
 ## Installation
 

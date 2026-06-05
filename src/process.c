@@ -8,7 +8,6 @@ int process(char *nbr, char **list)
     int len = -1;
     int rand = -1;
 
-    srand(time(NULL));
     while(i < ind) {
         charac = to_choose(list);
         len = my_strlen(charac);
