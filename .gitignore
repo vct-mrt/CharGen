@@ -1,5 +1,7 @@
 # Build artifacts
 chargen
+chargen_san
+a.out
 *.o
 *.a
 *.so
@@ -9,6 +11,11 @@ chargen
 *.su
 *.idb
 *.pdb
+
+# Coverage
+*.gcno
+*.gcda
+*.gcov
 
 # Package build directories
 build/
@@ -24,18 +31,22 @@ debian/
 # RPM build
 ~/rpmbuild/
 
-# Editor files
+# Editor / tooling files
 *.swp
 *.swo
 *~
 .vscode/
 .idea/
 *.sublime-*
+compile_commands.json
+
+# Local Claude Code settings (never publish personal paths/permissions)
+.claude/settings.local.json
+.claude/settings.json
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Test files
+# Test scratch output
 *.txt
-
