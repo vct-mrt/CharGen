@@ -1,5 +1,4 @@
 # Security Policy
-
 ## Random Number Generation — Default vs. Secure Mode
 
 ### Default mode (rand()) — NOT cryptographically secure

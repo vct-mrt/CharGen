@@ -1,0 +1,27 @@
+name: chargen
+base: core22
+adopt-info: chargen
+summary: Command-line random character generator
+description: |
+  CharGen is a command-line utility that generates random characters drawn
+  from user-selected character sets: numeric, alphabetic (upper and/or lower
+  case), and special characters. Characters are produced with the standard
+  rand() pseudo-random generator by default, or with a cryptographically
+  secure source (getrandom() / /dev/urandom) when the --secure flag is given.
+
+grade: stable
+confinement: strict
+
+apps:
+  chargen:
+    command: usr/bin/chargen
+
+parts:
+  chargen:
+    plugin: make
+    source: .
+    make-parameters: [PREFIX=/usr]
+    build-packages: [gcc, make]
+    override-pull: |
+      craftctl default
+      craftctl set version="$(git describe --tags --always | sed 's/^v//')"

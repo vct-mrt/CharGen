@@ -41,6 +41,11 @@ dist/
 *.sublime-*
 compile_commands.json
 
+# Secrets — never commit exported GPG private keys / store credentials
+*.asc
+*store-creds*.txt
+chargen-private.*
+
 # Local Claude Code settings (never publish personal paths/permissions)
 .claude/settings.local.json
 .claude/settings.json
