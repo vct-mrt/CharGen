@@ -10,9 +10,10 @@ SRC = 	src/main.c			\
 		src/flag_manager.c
 
 NAME = chargen
-CC = gcc
+CC ?= cc
 CPPFLAGS = -I include
-CFLAGS = -W -Wall -Wextra -O2
+WARNFLAGS = -W -Wall -Wextra
+CFLAGS ?= -O2
 LDFLAGS =
 
 # Installation directories
@@ -26,14 +27,16 @@ DESTDIR ?=
 all: $(NAME)
 
 $(NAME): $(SRC)
-	$(CC) -o $(NAME) $(SRC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
+	$(CC) -o $(NAME) $(SRC) $(WARNFLAGS) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
 
 install: $(NAME)
 	@echo "Installing $(NAME) to $(DESTDIR)$(BINDIR)"
-	install -D -m 0755 $(NAME) $(DESTDIR)$(BINDIR)/$(NAME)
+	mkdir -p $(DESTDIR)$(BINDIR)
+	install -m 0755 $(NAME) $(DESTDIR)$(BINDIR)/$(NAME)
 	@if [ -f "$(NAME).1" ]; then \
 		echo "Installing man page to $(DESTDIR)$(MANDIR)"; \
-		install -D -m 0644 $(NAME).1 $(DESTDIR)$(MANDIR)/$(NAME).1; \
+		mkdir -p $(DESTDIR)$(MANDIR); \
+		install -m 0644 $(NAME).1 $(DESTDIR)$(MANDIR)/$(NAME).1; \
 	fi
 
 uninstall:

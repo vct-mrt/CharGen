@@ -2,11 +2,10 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
+    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ main ]
-  release:
-    types: [ created ]
 
 jobs:
   # ── Build, strict warnings, and tests ─────────────────────────────────────
@@ -52,6 +51,52 @@ jobs:
       with:
         name: chargen-binary-${{ matrix.cc }}
         path: chargen
+
+    # Staged install, mirroring how a packaging formula (e.g. Homebrew) would
+    # invoke `make install`. Catches GNU-only `install -D` usage and a
+    # missing man page.
+    - name: Staged install check
+      run: |
+        make install PREFIX="$RUNNER_TEMP/prefix"
+        test -x "$RUNNER_TEMP/prefix/bin/chargen"
+        test -f "$RUNNER_TEMP/prefix/share/man/man1/chargen.1"
+        "$RUNNER_TEMP/prefix/bin/chargen" 16
+
+  # ── macOS build and test ─────────────────────────────────────────────────
+  build-macos:
+    name: Build and Test (macOS)
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # macOS runners already ship clang and make, no package install needed.
+    - name: Build
+      run: make
+
+    - name: Run test suite
+      run: |
+        cd tests
+        chmod +x test.sh
+        ./test.sh
+
+    # Staged install, mirroring how a packaging formula (e.g. Homebrew) would
+    # invoke `make install`. Catches GNU-only `install -D` usage and a
+    # missing man page.
+    - name: Staged install check
+      run: |
+        make install PREFIX="$RUNNER_TEMP/prefix"
+        test -x "$RUNNER_TEMP/prefix/bin/chargen"
+        test -f "$RUNNER_TEMP/prefix/share/man/man1/chargen.1"
+        "$RUNNER_TEMP/prefix/bin/chargen" 16
+
+    # Rebuild with an explicitly injected compiler and flags, to prove the
+    # Makefile does not discard them.
+    - name: Build with explicit CC/CFLAGS/LDFLAGS
+      run: |
+        make clean
+        make CC=clang CFLAGS="-O2" LDFLAGS=""
 
   # ── Sanitizer job ──────────────────────────────────────────────────────────
   sanitizers:
@@ -129,7 +174,7 @@ jobs:
     name: Build Packages
     needs: [build-and-test, sanitizers, code-quality]
     runs-on: ubuntu-latest
-    if: github.event_name == 'release'
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
     - name: Checkout code
@@ -140,12 +185,32 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential devscripts debhelper rpm
 
+    - name: Derive and verify version
+      run: |
+        VER="${GITHUB_REF_NAME#v}"
+        CODEVER=$(grep -oP '#define VERSION "\K[^"]+' include/random_char.h)
+        if [ "$VER" != "$CODEVER" ]; then
+          echo "Tag v$VER does not match code VERSION $CODEVER (include/random_char.h). Bump the header and commit before tagging."
+          exit 1
+        fi
+        echo "VER=$VER" >> "$GITHUB_ENV"
+
     - name: Build Debian package
       run: |
         cp -r packaging/debian .
+        sed -i "1s/chargen ([^)]*)/chargen (${VER}-1)/" debian/changelog
         dpkg-buildpackage -us -uc -b
         mkdir -p dist
         mv ../*.deb dist/
+
+    - name: Build RPM package
+      run: |
+        mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+        git archive --format=tar.gz --prefix=chargen-${VER}/ HEAD -o ~/rpmbuild/SOURCES/chargen-${VER}.tar.gz
+        cp packaging/chargen.spec ~/rpmbuild/SPECS/
+        rpmbuild -ba --define "pkgver ${VER}" ~/rpmbuild/SPECS/chargen.spec
+        mkdir -p dist
+        find ~/rpmbuild/RPMS -name '*.rpm' -exec cp {} dist/ \;
 
     - name: Create source tarball
       run: |
@@ -157,8 +222,11 @@ jobs:
     - name: Upload Release Assets
       uses: softprops/action-gh-release@v1
       with:
+        name: ${{ github.ref_name }}
+        generate_release_notes: true
         files: |
           dist/*.deb
+          dist/*.rpm
           dist/*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

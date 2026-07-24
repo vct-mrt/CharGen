@@ -1,8 +1,64 @@
-#define _GNU_SOURCE
+#if defined(__linux__)
+    #define _GNU_SOURCE
+#endif
+
 #include "random_char.h"
-#include <sys/random.h>
 #include <fcntl.h>
 #include <errno.h>
+
+#if defined(__linux__)
+    #include <sys/random.h>
+#endif
+
+/* Fill buf with len bytes read from /dev/urandom, looping over short
+ * reads and retrying on EINTR. Returns 0 on success, -1 on failure. */
+static int fill_from_dev_urandom(void *buf, size_t len)
+{
+    unsigned char *p = (unsigned char *)buf;
+    size_t filled = 0;
+    ssize_t ret;
+    int fd;
+
+    fd = open("/dev/urandom", O_RDONLY);
+    if (fd == -1)
+        return -1;
+    while (filled < len) {
+        ret = read(fd, p + filled, len - filled);
+        if (ret == -1 && errno == EINTR)
+            continue;
+        if (ret <= 0) {
+            close(fd);
+            return -1;
+        }
+        filled += (size_t)ret;
+    }
+    close(fd);
+    return 0;
+}
+
+/* Fill buf with len bytes of cryptographically secure random data.
+ * Returns 0 on success, -1 on failure. */
+static int fill_random_bytes(void *buf, size_t len)
+{
+#if defined(__linux__)
+    ssize_t ret;
+
+    /* Try getrandom(), retrying on EINTR. */
+    do {
+        ret = getrandom(buf, len, 0);
+    } while (ret == -1 && errno == EINTR);
+
+    if (ret == (ssize_t)len)
+        return 0;
+    /* Fallback: read from /dev/urandom. */
+    return fill_from_dev_urandom(buf, len);
+#elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+    arc4random_buf(buf, len);
+    return 0;
+#else
+    return fill_from_dev_urandom(buf, len);
+#endif
+}
 
 int my_random(int nb)
 {
@@ -24,31 +80,14 @@ int my_secure_random(int nb)
     unsigned int r;
     unsigned int limit;
     unsigned char buf[4];
-    ssize_t ret;
-    int fd;
 
     if (nb <= 0)
         return 0;
     limit = UINT_MAX - (UINT_MAX % (unsigned int)nb);
     do {
-        /* Try getrandom(), retrying on EINTR. */
-        do {
-            ret = getrandom(buf, sizeof(buf), 0);
-        } while (ret == -1 && errno == EINTR);
-
-        if (ret == -1) {
-            /* Fallback: read from /dev/urandom. */
-            fd = open("/dev/urandom", O_RDONLY);
-            if (fd == -1) {
-                fprintf(stderr, "chargen: secure RNG unavailable\n");
-                exit(84);
-            }
-            ret = read(fd, buf, sizeof(buf));
-            close(fd);
-            if (ret != (ssize_t)sizeof(buf)) {
-                fprintf(stderr, "chargen: secure RNG unavailable\n");
-                exit(84);
-            }
+        if (fill_random_bytes(buf, sizeof(buf)) == -1) {
+            fprintf(stderr, "chargen: secure RNG unavailable\n");
+            exit(84);
         }
         r = ((unsigned int)buf[0])
           | ((unsigned int)buf[1] << 8)

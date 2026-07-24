@@ -15,6 +15,7 @@ Ce guide explique comment publier CharGen sur différents dépôts de paquets.
 ## Ubuntu PPA (Launchpad)
 
 ### Prérequis
+
 ```bash
 sudo apt install devscripts dput
 ```
@@ -26,6 +27,7 @@ sudo apt install devscripts dput
    - Configurez votre clé GPG
 
 2. **Configurer GPG**
+
    ```bash
    gpg --gen-key
    gpg --list-keys
@@ -33,6 +35,7 @@ sudo apt install devscripts dput
    ```
 
 3. **Préparer le paquet source**
+
    ```bash
    cd CharGen
    cp -r packaging/debian .
@@ -40,12 +43,15 @@ sudo apt install devscripts dput
    ```
 
 4. **Uploader vers PPA**
+
    ```bash
    dput ppa:your-launchpad-id/chargen ../chargen_1.0.0-1_source.changes
    ```
 
 ### Maintenir le PPA
+
 - Les utilisateurs pourront installer avec:
+
   ```bash
   sudo add-apt-repository ppa:your-launchpad-id/chargen
   sudo apt update
@@ -99,6 +105,7 @@ echo "deb [signed-by=/usr/share/keyrings/chargen-archive-keyring.gpg] http://you
 ## Fedora COPR
 
 ### Prérequis
+
 ```bash
 sudo dnf install copr-cli
 ```
@@ -110,12 +117,14 @@ sudo dnf install copr-cli
    - Créez un projet COPR sur https://copr.fedorainfracloud.org
 
 2. **Configurer COPR CLI**
+
    ```bash
    # Télécharger votre config depuis COPR web interface
    vim ~/.config/copr
    ```
 
 3. **Créer le projet**
+
    ```bash
    copr-cli create chargen --chroot fedora-39-x86_64 --chroot fedora-40-x86_64 \
      --description "Random character generator" \
@@ -123,6 +132,7 @@ sudo dnf install copr-cli
    ```
 
 4. **Build et upload**
+
    ```bash
    # Créer un SRPM
    rpmbuild -bs packaging/chargen.spec
@@ -132,6 +142,7 @@ sudo dnf install copr-cli
    ```
 
 ### Utilisation par les utilisateurs
+
 ```bash
 sudo dnf copr enable YOUR_USERNAME/chargen
 sudo dnf install chargen
@@ -142,6 +153,7 @@ sudo dnf install chargen
 ## Arch User Repository (AUR)
 
 ### Prérequis
+
 ```bash
 sudo pacman -S base-devel git
 ```
@@ -153,12 +165,14 @@ sudo pacman -S base-devel git
    - Créez un compte et ajoutez votre clé SSH
 
 2. **Configurer SSH**
+
    ```bash
    ssh-keygen -t ed25519 -C "your_email@example.com"
    # Ajouter la clé publique sur AUR
    ```
 
 3. **Créer le dépôt AUR**
+
    ```bash
    git clone ssh://aur@aur.archlinux.org/chargen.git chargen-aur
    cd chargen-aur
@@ -176,6 +190,7 @@ sudo pacman -S base-devel git
    ```
 
 ### Utilisation par les utilisateurs
+
 ```bash
 # Avec yay
 yay -S chargen
@@ -196,6 +211,7 @@ makepkg -si
 ### Créer un Snap (multiplateforme)
 
 1. **Créer `snapcraft.yaml`**
+
    ```bash
    mkdir -p snap
    cat > snap/snapcraft.yaml << 'EOF'
@@ -229,6 +245,7 @@ makepkg -si
    ```
 
 2. **Build et publish**
+
    ```bash
    snapcraft
    snapcraft login
@@ -236,6 +253,7 @@ makepkg -si
    ```
 
 ### Utilisation
+
 ```bash
 sudo snap install chargen
 ```
@@ -280,6 +298,7 @@ cd packaging
 ## Automatisation avec GitHub Actions
 
 Créez `.github/workflows/release.yml` pour automatiser:
+
 - Build des packages
 - Tests
 - Upload vers GitHub Releases
@@ -290,6 +309,7 @@ Créez `.github/workflows/release.yml` pour automatiser:
 ## Support et Maintenance
 
 Après publication:
+
 1. Monitorer les issues GitHub
 2. Répondre aux questions utilisateurs
 3. Mettre à jour régulièrement

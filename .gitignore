@@ -20,7 +20,8 @@ a.out
 # Package build directories
 build/
 dist/
-debian/
+# stray root-level debian/ copied by packaging/build-package.sh (NOT packaging/debian/)
+/debian/
 *.deb
 *.rpm
 *.pkg.tar.*
@@ -50,3 +51,8 @@ Thumbs.db
 
 # Test scratch output
 *.txt
+
+#CLI
+.claude
+.claude-flow
+

@@ -15,24 +15,22 @@ Passing `--secure` makes CharGen source randomness from `getrandom()`/`/dev/uran
 If you prefer dedicated tools regardless of mode, the following remain good alternatives:
 
 | Tool | Example |
-|------|---------|
+| --- | --- |
 | `openssl rand` | `openssl rand -base64 32` |
 | `pwgen` | `pwgen -s 32 1` |
-| `/dev/urandom` | `head -c 32 /dev/urandom | base64` |
+| `/dev/urandom` | `head -c 32 /dev/urandom \| base64` |
 | `python3 secrets` | `python3 -c "import secrets; print(secrets.token_urlsafe(32))"` |
 
 ## Supported Versions
 
 | Version | Supported |
-|---------|-----------|
+| ------- | --------- |
 | 1.0.x   | Yes       |
 | < 1.0   | No        |
 
 ## Reporting a Vulnerability
 
-Please **do not** open a public GitHub issue for security vulnerabilities. Instead, report privately by email:
-
-**martinetti.victor11@gmail.com**
+Please **do not** open a public GitHub issue for security vulnerabilities. Instead, report privately by email: **<martinetti.victor11@gmail.com>**
 
 Include in your report:
 

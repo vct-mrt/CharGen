@@ -48,7 +48,9 @@ build_deb() {
     
     # Create debian directory in project root
     cp -r packaging/debian .
-    
+    # Ensure the stray root-level copy is removed even if the build fails
+    trap 'rm -rf debian' EXIT
+
     # Build package
     dpkg-buildpackage -us -uc -b
     
@@ -57,10 +59,7 @@ build_deb() {
     mv ../*.deb "$BUILD_DIR/deb/" 2>/dev/null || true
     mv ../*.changes "$BUILD_DIR/deb/" 2>/dev/null || true
     mv ../*.buildinfo "$BUILD_DIR/deb/" 2>/dev/null || true
-    
-    # Cleanup
-    rm -rf debian
-    
+
     echo_info "Debian package built successfully in $BUILD_DIR/deb/"
 }
 

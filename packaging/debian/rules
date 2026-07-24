@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+# Build the chargen Debian package with debhelper.
+
+%:
+	dh $@
+
+# The upstream Makefile installs under PREFIX (default /usr/local). For a
+# system package the files must land under /usr, so pass PREFIX=/usr to the
+# install target invoked by dh_auto_install (make install DESTDIR=debian/chargen).
+override_dh_auto_install:
+	dh_auto_install -- PREFIX=/usr

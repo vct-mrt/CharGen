@@ -7,37 +7,15 @@
 
 ## Description
 
-`CharGen` is a lightweight, fast command-line utility written in C that generates random characters based on specified criteria. Perfect for creating passwords, test data, or random strings for any purpose.
+`CharGen` is a command-line utility written in C that generates random characters from selectable character sets. Useful for passwords, test data, or random strings in general. No dependencies beyond libc; single binary, about 400 lines of C across six source files.
 
 ## Features
 
-- 🎲 **Multiple character sets**: numbers, letters (upper/lowercase), special characters
-- ⚡ **Fast and lightweight**: minimal dependencies, efficient C implementation
-- 🎯 **Flexible options**: combine different character types as needed
-- 📦 **Easy installation**: available for Debian, Fedora/RHEL, and Arch Linux
-- 🔧 **Single binary**: zero external dependencies beyond libc, easy to deploy
+- Multiple character sets: numbers, letters (upper/lowercase), and special characters, combinable via flags
+- Optional cryptographically secure mode (`--secure`), sourced from `getrandom()`/`/dev/urandom` instead of `rand()`
+- Packages for Debian, Fedora/RHEL, and Arch Linux, or build from source with no extra dependencies beyond libc
 
 ## Installation
-
-### From Package Manager (Recommended)
-
-#### Fedora/RHEL/CentOS
-```bash
-sudo dnf copr enable vct-mrt/chargen
-sudo dnf install chargen
-```
-
-#### Ubuntu/Debian (Coming Soon)
-```bash
-# PPA coming soon
-```
-
-#### Arch Linux (AUR)
-```bash
-yay -S chargen
-# or
-paru -S chargen
-```
 
 ### From Source
 
@@ -47,6 +25,8 @@ cd CharGen
 make
 sudo make install
 ```
+
+`make install` respects `PREFIX` (default `/usr/local`) and `DESTDIR`, so it works for packaging too.
 
 ### Quick Install (Temporary)
 
@@ -61,6 +41,7 @@ sudo cp chargen /usr/local/bin/
 ## Usage
 
 ### Basic Syntax
+
 ```bash
 chargen [options] <number>
 ```
@@ -68,7 +49,7 @@ chargen [options] <number>
 ### Options
 
 | Option | Description |
-|--------|-------------|
+| --- | --- |
 | `-h, --help` | Display help message |
 | `-v, --version` | Display version information |
 | `-n` | Generate only numeric characters (0-9) |
@@ -76,70 +57,43 @@ chargen [options] <number>
 | `-s` | Generate only special characters |
 | `-i` | Use lowercase letters (requires `-c`) |
 | `-a` | Use uppercase letters (requires `-c`) |
-| `--secure` | Use a cryptographically secure RNG (getrandom) — suitable for passwords/tokens |
+| `--secure` | Use a cryptographically secure RNG (getrandom), suitable for passwords/tokens |
+
+With no flags, CharGen generates alphanumeric characters plus special characters. Flags combine: `-ns` means numbers and special characters, `-ci` means lowercase letters only.
 
 ### Examples
 
-Generate 16 random characters (default: alphanumeric + special):
 ```bash
-chargen 16
+chargen 16              # 16 chars, default alphanumeric + special, e.g. aB3$xY9!mK2@pL8%
+chargen -n 8            # 8 numeric chars, e.g. 42819537
+chargen -ci 12          # 12 lowercase letters, e.g. xkcdpassword
+chargen -ca 20          # 20 uppercase letters, e.g. RANDOMUPPERCASETEXT
+chargen -ns 32          # 32 chars, numbers + special, e.g. #8!2$9@1&5*7%3(4)6+0-=_
+chargen --secure 16     # 16 chars, cryptographically secure
+chargen --secure -c 20  # 20 letters, cryptographically secure
 ```
 
-Generate 8 numeric characters:
-```bash
-chargen -n 8
-# Output: 42819537
-```
-
-Generate 12 lowercase letters:
-```bash
-chargen -ci 12
-# Output: xkcdpassword
-```
-
-Generate 20 uppercase letters:
-```bash
-chargen -ca 20
-# Output: RANDOMUPPERCASETEXT
-```
-
-Generate 32 characters with numbers and special characters:
-```bash
-chargen -ns 32
-# Output: #8!2$9@1&5*7%3(4)6+0-=_
-```
-
-Generate a strong password (16 chars, all types):
-```bash
-chargen 16
-# Output: aB3$xY9!mK2@pL8%
-```
-
-Generate a cryptographically secure 16-character string (password/token grade):
-```bash
-chargen --secure 16
-```
-
-Generate a secure 20-character alphabetic string:
-```bash
-chargen --secure -c 20
-```
+Any argument that isn't a recognized flag or the character count is rejected: CharGen exits with status `84` on bad input (unknown flags, missing count, non-numeric count, `-i`/`-a` without `-c`) and `0` on success.
 
 ## For Maintainers
 
-See [PACKAGING.md](PACKAGING.md) for information on building and distributing packages.
+See [PACKAGING.md](docs/PACKAGING.md) for information on building and distributing packages.
 
 ## Development
 
 ### Compilation
+
 ```bash
-make              # Standard build
-make debug        # Build with debug symbols
-make clean        # Clean build artifacts
+make               # Standard build
+make debug         # Build with debug symbols
+make check         # Build and run the test suite (tests/test.sh)
+make clean         # Clean build artifacts
+sudo make install  # Install to $PREFIX/bin (default /usr/local/bin)
 ```
 
 ### Project Structure
-```
+
+```text
 CharGen/
 ├── include/
 │   └── random_char.h    # Header file with declarations
@@ -151,12 +105,13 @@ CharGen/
 │   ├── flag_help.c      # Help and version display
 │   └── flag_manager.c   # Command-line argument parsing
 ├── packaging/           # Distribution packages
-│   ├── debian/          # Debian package files
 │   ├── chargen.spec     # RPM spec file
 │   ├── PKGBUILD         # Arch Linux package file
 │   └── build-package.sh # Build script
 ├── requirement/
 │   └── requirement.sh   # Dependency installer
+├── tests/
+│   └── test.sh          # Test suite
 ├── Makefile
 ├── LICENSE              # GPL-3.0
 └── README.md
@@ -164,29 +119,16 @@ CharGen/
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the dev setup, coding style, and PR process.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0, see the [LICENSE](LICENSE) file for details.
 
 ## Author
 
 - **vct-mrt** - [GitHub](https://github.com/vct-mrt)
 
-## Acknowledgments
-
-- Built with ❤️ using C
-- Inspired by the need for a simple, fast character generator
-
 ---
 
-**Note**: CharGen's default mode uses the standard C `rand()` function, which is suitable for general purposes (test data, random strings) but is **not** cryptographically secure. For security-critical output, use the `--secure` flag, which sources randomness from `getrandom()`/`/dev/urandom` instead of `rand()` and is suitable for passwords and tokens. If you prefer dedicated tools, `pwgen` and `openssl rand` remain good alternatives.
+CharGen's default mode uses the standard C `rand()` function, suitable for general purposes (test data, random strings) but **not** cryptographically secure. For security-critical output, use the `--secure` flag, which sources randomness from `getrandom()`/`/dev/urandom` instead of `rand()` and is suitable for passwords and tokens. If you prefer dedicated tools, `pwgen` and `openssl rand` remain good alternatives.

@@ -1,0 +1,21 @@
+Source: chargen
+Section: utils
+Priority: optional
+Maintainer: Victor Martinetti <martinetti.victor11@gmail.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/vct-mrt/CharGen
+Vcs-Git: https://github.com/vct-mrt/CharGen.git
+Vcs-Browser: https://github.com/vct-mrt/CharGen
+
+Package: chargen
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: generate random characters from selectable character sets
+ CharGen is a command-line utility that generates random characters drawn
+ from user-selected character sets: numeric, alphabetic (upper and/or lower
+ case) and special characters.
+ .
+ Random values are produced either with the standard non-cryptographic
+ pseudo-random generator or, with the --secure flag, a cryptographically
+ secure source (getrandom(2) with a /dev/urandom fallback).

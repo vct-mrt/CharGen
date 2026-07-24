@@ -15,6 +15,7 @@ Suite complète de tests automatisés qui vérifie :
 - **Tests de validation** : vérification du format de sortie
 
 **Utilisation :**
+
 ```bash
 cd tests
 ./test.sh
@@ -23,6 +24,7 @@ cd tests
 ## Exécution dans CI/CD
 
 Ces tests sont automatiquement exécutés par GitHub Actions sur :
+
 - Chaque push sur main/develop
 - Chaque pull request
 - Chaque création de tag/release
@@ -39,7 +41,8 @@ Pour ajouter un test :
 ## Résultats Attendus
 
 Tous les tests doivent passer (exit code 0) :
-```
+
+```text
 Total tests: 24
 Passed: 24
 Failed: 0
