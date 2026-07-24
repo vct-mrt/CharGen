@@ -16,8 +16,6 @@ int error(int ac, char **av)
     bool has_a = false;
 
     if (ac == 1) {
-        fprintf(stderr, "Error: Missing arguments\n");
-        fprintf(stderr, "Try 'chargen --help' for more information.\n");
         return 84;
     }
 
