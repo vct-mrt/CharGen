@@ -22,22 +22,10 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Install packaging tools
         run: sudo apt-get update && sudo apt-get install -y createrepo-c dpkg-dev apt-utils gnupg rpm
-
-      - name: Import GPG key
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-        run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          KEYID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/{print $5; exit}')
-          echo "GPG_KEYID=$KEYID" >> "$GITHUB_ENV"
-          mkdir -p site/apt site/rpm
-          gpg --armor --export "$KEYID" > site/apt/KEY.asc
-          gpg --export "$KEYID" > site/apt/KEY.gpg
-          gpg --armor --export "$KEYID" > site/rpm/KEY.gpg
 
       - name: Download release packages
         env:
@@ -50,6 +38,21 @@ jobs:
           find dl -name '*.deb' -exec cp -f {} pool_deb/ \; 2>/dev/null || true
           find dl -name '*.rpm' -exec cp -f {} pool_rpm/ \; 2>/dev/null || true
           echo "debs: $(ls pool_deb | wc -l), rpms: $(ls pool_rpm | wc -l)"
+
+      - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          export GNUPGHOME="$(mktemp -d)"
+          chmod 700 "$GNUPGHOME"
+          echo "GNUPGHOME=$GNUPGHOME" >> "$GITHUB_ENV"
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          KEYID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/{print $5; exit}')
+          echo "GPG_KEYID=$KEYID" >> "$GITHUB_ENV"
+          mkdir -p site/apt site/rpm
+          gpg --armor --export "$KEYID" > site/apt/KEY.asc
+          gpg --export "$KEYID" > site/apt/KEY.gpg
+          gpg --armor --export "$KEYID" > site/rpm/KEY.gpg
 
       - name: Build APT repository
         run: |
@@ -79,6 +82,8 @@ jobs:
           %_gpg_name $GPG_KEYID
           %__gpg_sign_cmd %{__gpg} gpg --batch --no-armor --pinentry-mode loopback --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
           RPMMACROS
+          # NOTE: rpm --addsign parses each .rpm while the key is loaded; full parse/sign
+          # separation of untrusted packages is a tracked follow-up (see SECURITY_AUDIT.md GHA-1).
           for f in site/rpm/*.rpm; do rpm --addsign "$f" || true; done
           createrepo_c site/rpm
           gpg --batch --yes --pinentry-mode loopback --default-key "$GPG_KEYID" --detach-sign --armor site/rpm/repodata/repomd.xml
@@ -128,11 +133,19 @@ jobs:
           </html>
           HTML
 
+      - name: Wipe GPG key material
+        if: always()
+        run: |
+          if [ -n "${GNUPGHOME:-}" ] && [ -d "$GNUPGHOME" ]; then
+            gpgconf --kill all 2>/dev/null || true
+            rm -rf "$GNUPGHOME"
+          fi
+
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: site
 
       - name: Deploy to GitHub Pages
         id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

@@ -5,20 +5,21 @@ on:
     tags: ['v*.*.*']
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   snap:
     runs-on: ubuntu-latest
-    env:
-      SNAP_CREDS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0        # full history + tags required for `git describe` in snapcraft override-pull
       - name: Build snap
         id: build
-        uses: snapcore/action-build@v1
+        uses: snapcore/action-build@3bdaa03e1ba6bf59a65f84a751d943d549a54e79 # v1.3.0
       - name: Upload snap artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: chargen-snap
           path: ${{ steps.build.outputs.snap }}
@@ -26,8 +27,9 @@ jobs:
       # workflow does not fail on tags before the Snap Store setup is done.
       - name: Publish to Snap Store (stable)
         if: startsWith(github.ref, 'refs/tags/v') && env.SNAP_CREDS != ''
-        uses: snapcore/action-publish@v1
+        uses: snapcore/action-publish@214b86e5ca036ead1668c79afb81e550e6c54d40 # v1.2.0
         env:
+          SNAP_CREDS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
         with:
           snap: ${{ steps.build.outputs.snap }}

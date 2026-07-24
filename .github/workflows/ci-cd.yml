@@ -5,6 +5,9 @@ on:
     tags: [ 'v*.*.*' ]
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   # ── Build, strict warnings, and tests ─────────────────────────────────────
   build-and-test:
@@ -18,7 +21,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
     - name: Install dependencies
       run: |
@@ -45,7 +48,7 @@ jobs:
         make CC=${{ matrix.cc }} CFLAGS="-W -Wall -Wextra -O2 -Werror"
 
     - name: Upload binary (${{ matrix.cc }})
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: chargen-binary-${{ matrix.cc }}
         path: chargen
@@ -67,7 +70,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
     - name: Install dependencies
       run: |
@@ -102,7 +105,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
     - name: Install cppcheck
       run: |
@@ -143,7 +146,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
     - name: Install packaging tools
       run: |
@@ -180,14 +183,16 @@ jobs:
         find ~/rpmbuild/RPMS -name '*.rpm' -exec cp {} dist/ \;
 
     - name: Create source tarball
+      env:
+        REF_NAME: ${{ github.ref_name }}
       run: |
         make clean
         cd ..
-        tar czf chargen-${{ github.ref_name }}.tar.gz --exclude=.git CharGen/
-        mv chargen-${{ github.ref_name }}.tar.gz CharGen/dist/
+        tar czf "chargen-${REF_NAME}.tar.gz" --exclude=.git CharGen/
+        mv "chargen-${REF_NAME}.tar.gz" CharGen/dist/
 
     - name: Upload Release Assets
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
       with:
         name: ${{ github.ref_name }}
         generate_release_notes: true
