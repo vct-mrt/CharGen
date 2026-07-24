@@ -1,19 +1,41 @@
-# CharGen
+<h1 align="center">CharGen</h1>
 
-[![CI](https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/version-1.0.1-green.svg)](https://github.com/vct-mrt/CharGen/releases)
-[![Language: C](https://img.shields.io/badge/language-C-blue.svg)]()
+<p align="center">
+  <img src="img/logo.png" alt="CharGen logo" width="260" />
+</p>
 
-## Description
 
-`CharGen` is a command-line utility written in C that generates random characters from selectable character sets. Useful for passwords, test data, or random strings in general. Linux-only, no dependencies beyond libc; single binary, about 400 lines of C across six source files.
+<p align="center">
+  <em>Generate random characters from the character sets you choose — fast rand() or crypto-secure getrandom().</em>
+</p>
 
-## Features
+<p align="center">
+  <a href="https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml"><img src="https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml/badge.svg" alt="CI" /></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3" /></a>
+  <a href="https://github.com/vct-mrt/CharGen/releases"><img src="https://img.shields.io/badge/version-1.0.5-green.svg" alt="Version" /></a>
+  <img src="https://img.shields.io/badge/language-C-blue.svg" alt="Language: C" />
+</p>
 
-- Multiple character sets: numbers, letters (upper/lowercase), and special characters, combinable via flags
-- Optional cryptographically secure mode (`--secure`), sourced from `getrandom()` with a `/dev/urandom` fallback instead of `rand()`
-- Installable from signed apt and dnf repositories, from the Snap Store, or built from source with no extra dependencies beyond libc
+---
+
+`CharGen` is a small command-line utility written in C that generates random
+characters from selectable character sets — numeric, alphabetic, and special.
+Handy for passwords, test fixtures, tokens, or random strings in general.
+Linux-only, no dependencies beyond libc, a single binary of about 400 lines
+across six source files.
+
+By default it draws from the standard C `rand()` PRNG (fast, unbiased via
+rejection sampling, but **not** for secrets). Pass `--secure` and it switches to
+a cryptographically secure source: `getrandom()` with a `/dev/urandom`
+fallback.
+
+## Quick start
+
+```bash
+chargen 16                # 16 chars from all sets   -> aB3$xY9!mK2@pL8%
+chargen -n 8              # 8 numeric chars          -> 42819537
+chargen -ncs 20 --secure  # 20 chars, crypto-secure  -> 7hQ!p2$Rk9#tW4mZ*eL
+```
 
 ## Installation
 
@@ -33,15 +55,27 @@ sudo dnf config-manager --add-repo https://vct-mrt.github.io/CharGen/rpm/chargen
 sudo dnf install chargen
 ```
 
+The apt and dnf packages come from self-hosted, GPG-signed repositories
+published to GitHub Pages. See [docs/REPOSITORY.md](docs/REPOSITORY.md) for
+repository details.
+
 ### Snap
 
 ```bash
 sudo snap install chargen
 ```
 
-The apt and dnf packages come from self-hosted, GPG-signed repositories published to GitHub Pages. See [docs/REPOSITORY.md](docs/REPOSITORY.md) for repository details and [docs/SNAP.md](docs/SNAP.md) for the Snap package.
+See [docs/SNAP.md](docs/SNAP.md) for the Snap package.
 
-### From source
+### Arch (PKGBUILD)
+
+```bash
+git clone https://github.com/vct-mrt/CharGen.git
+cd CharGen/packaging
+makepkg -si
+```
+
+### Build from source
 
 ```bash
 git clone https://github.com/vct-mrt/CharGen.git
@@ -50,95 +84,82 @@ make
 sudo make install
 ```
 
-`make install` respects `PREFIX` (default `/usr/local`) and `DESTDIR`, and installs the binary plus the `chargen.1` man page.
+`make install` respects `PREFIX` (default `/usr/local`) and `DESTDIR`, and
+installs the binary plus the `chargen.1` man page.
 
 ## Usage
-
-### Basic syntax
 
 ```bash
 chargen [options] <number>
 ```
 
-### Options
-
-| Option | Description |
+| Flag | Meaning |
 | --- | --- |
-| `-h, --help` | Display help message |
-| `-v, --version` | Display version information |
-| `-n` | Generate only numeric characters (0-9) |
-| `-c` | Generate only alphabetic characters (a-z, A-Z) |
-| `-s` | Generate only special characters |
-| `-i` | Use lowercase letters (requires `-c`) |
-| `-a` | Use uppercase letters (requires `-c`) |
-| `--secure` | Use a cryptographically secure RNG (`getrandom()` / `/dev/urandom`) |
+| `-h`, `--help` | Display help, exit 0 |
+| `-v`, `--version` | Display version, exit 0 |
+| `-n` | Numeric characters only (0-9) |
+| `-c` | Alphabetic characters only (both cases unless `-i`/`-a`) |
+| `-s` | Special characters only |
+| `-i` | Use lowercase (requires `-c`) |
+| `-a` | Use uppercase (requires `-c`) |
+| `--secure` | Use `getrandom()` / `/dev/urandom` instead of `rand()` |
+| `<number>` | Count of characters to generate (required, positive integer) |
 
-The `<number>` argument is required and must be a positive integer. With no charset flag, CharGen uses all sets (numbers, letters, and special characters). Short flags combine: `-ns` means numbers and special characters, `-ci` means lowercase letters only.
+Short flags combine: `-ci` is lowercase letters only, `-ncs` is numbers plus
+letters plus special. If none of `-n`/`-c`/`-s` is given, CharGen uses all four
+character sets. Bad input (unknown flags, a missing/non-numeric/non-positive
+count, `-i`/`-a` without `-c`) is rejected with exit status `84`; success exits
+`0`.
 
-### Examples
-
-```bash
-chargen 16              # 16 chars, default: all sets, e.g. aB3$xY9!mK2@pL8%
-chargen -n 8            # 8 numeric chars, e.g. 42819537
-chargen -ci 12          # 12 lowercase letters, e.g. xkcdpassword
-chargen -ncs 20         # 20 chars, numbers + letters + special
-chargen -ncs 20 --secure  # same, cryptographically secure
-```
-
-Any argument that isn't a recognized flag or the character count is rejected: CharGen exits with status `84` on bad input (unknown flags, missing count, non-numeric count, `-i`/`-a` without `-c`) and `0` on success.
-
-## Development
-
-### Compilation
+## Examples
 
 ```bash
-make               # Standard build
-make debug         # Build with debug symbols
-make check         # Build and run the test suite (tests/test.sh)
-make clean         # Clean build artifacts
-sudo make install  # Install to $PREFIX/bin (default /usr/local/bin)
+chargen 16                # 16 chars, default: all sets
+chargen -n 8              # 8 numeric characters
+chargen -ci 12            # 12 lowercase letters
+chargen -s 10             # 10 special characters
+chargen -ncs 20           # 20 chars: numbers + letters + special
+chargen -ncs 20 --secure  # same, from a cryptographically secure RNG
 ```
 
-### Project structure
+## Security
 
-```text
-CharGen/
-├── include/
-│   └── random_char.h    # Declarations and constants
-├── src/
-│   ├── main.c           # Entry point
-│   ├── lib.c            # Utility functions and RNG
-│   ├── error.c          # Argument validation
-│   ├── process.c        # Character generation logic
-│   ├── flag_help.c      # Help and version display
-│   └── flag_manager.c   # Command-line argument parsing
-├── packaging/           # Distribution packaging
-├── requirement/
-│   └── requirement.sh   # Dependency installer
-├── tests/
-│   └── test.sh          # Test suite
-├── chargen.1            # Man page
-├── Makefile
-├── LICENSE              # GPL-3.0
-└── README.md
+The default mode uses the standard C `rand()` function with unbiased rejection
+sampling. It is fine for general purposes — test data, random strings — but is
+**not** cryptographically secure and must not be used for secrets.
+
+For security-critical output, pass `--secure`. CharGen then sources randomness
+from `getrandom()` with a `/dev/urandom` fallback (retrying on `EINTR`), which
+is suitable for passwords and tokens. If no secure source is available it exits
+`84` rather than falling back to `rand()`. If you prefer dedicated tools,
+`pwgen` and `openssl rand` remain good alternatives.
+
+## Building & testing
+
+```bash
+make               # standard build: gcc -o chargen src/*.c -I include -W -Wall -Wextra -O2
+make debug         # build with debug symbols (-g3 -DDEBUG)
+make re            # clean + rebuild
+make check         # build, then run the test suite (tests/test.sh)
+make clean         # remove build artifacts
+sudo make install  # install to $PREFIX/bin (default /usr/local/bin) + man page
+make uninstall     # remove installed files
 ```
 
-## For maintainers
-
-See [docs/PACKAGING.md](docs/PACKAGING.md) for building packages, [docs/REPOSITORY.md](docs/REPOSITORY.md) for the apt/dnf repositories, and [docs/SNAP.md](docs/SNAP.md) for the Snap package.
+The vector source for the logo lives at [`img/logo.svg`](img/logo.svg); the
+rendered [`img/logo.png`](img/logo.png) is used above.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the dev setup, coding style, and PR process.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the dev setup, coding style, and PR
+process. For packaging and repository internals, see
+[docs/REPOSITORY.md](docs/REPOSITORY.md) and [docs/SNAP.md](docs/SNAP.md).
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0, see the [LICENSE](LICENSE) file for details.
+Licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE)
+file for details.
 
 ## Author
 
-- **vct-mrt** - [GitHub](https://github.com/vct-mrt)
-
----
-
-CharGen's default mode uses the standard C `rand()` function, suitable for general purposes (test data, random strings) but **not** cryptographically secure. For security-critical output, use the `--secure` flag, which sources randomness from `getrandom()` with a `/dev/urandom` fallback and is suitable for passwords and tokens. If you prefer dedicated tools, `pwgen` and `openssl rand` remain good alternatives.
+**vct-mrt** — [GitHub](https://github.com/vct-mrt)
