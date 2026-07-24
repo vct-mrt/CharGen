@@ -21,7 +21,7 @@ A clear and concise description of what you expected to happen.
 A clear and concise description of what actually happened.
 
 ## Environment
-- **OS**: (e.g., Ubuntu 20.04, macOS 13, Windows 10/WSL2)
+- **OS**: (e.g., Ubuntu 20.04, Windows 10/WSL2)
 - **Compiler**: (e.g., `gcc --version`, `clang --version`)
 - **chargen version**: (from `chargen --version` or git commit hash)
 

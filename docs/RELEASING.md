@@ -110,4 +110,3 @@ This step requires the maintainer's own GitHub credentials.
 These are not automated and are performed at the maintainer's discretion:
 
 - **AUR**: update `PKGBUILD` (`pkgver`, `sha256sums`) and push to the AUR git remote.
-- **Homebrew**: update the formula's `url` and `sha256`, submit a PR to the tap.

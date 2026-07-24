@@ -52,9 +52,6 @@ static int fill_random_bytes(void *buf, size_t len)
         return 0;
     /* Fallback: read from /dev/urandom. */
     return fill_from_dev_urandom(buf, len);
-#elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
-    arc4random_buf(buf, len);
-    return 0;
 #else
     return fill_from_dev_urandom(buf, len);
 #endif

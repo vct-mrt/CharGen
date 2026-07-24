@@ -50,7 +50,7 @@ jobs:
         name: chargen-binary-${{ matrix.cc }}
         path: chargen
 
-    # Staged install, mirroring how a packaging formula (e.g. Homebrew) would
+    # Staged install into a temporary prefix, mirroring how a distro package
     # invoke `make install`. Catches GNU-only `install -D` usage and a
     # missing man page.
     - name: Staged install check

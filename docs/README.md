@@ -8,7 +8,6 @@ This directory holds developer/maintainer notes. End-user documentation lives at
 - [QUICK_START.md](QUICK_START.md) — quick start guide
 - [PACKAGING.md](PACKAGING.md) — packaging guide
 - [RELEASING.md](RELEASING.md) — release checklist for maintainers
-- [HOMEBREW.md](HOMEBREW.md) — Homebrew tap and formula guide
 
 ## User documentation (repository root)
 
