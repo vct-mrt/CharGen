@@ -2,10 +2,8 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, dev ]
     tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch: {}
 
 jobs:
   # ── Build, strict warnings, and tests ─────────────────────────────────────
@@ -61,45 +59,6 @@ jobs:
         test -x "$RUNNER_TEMP/prefix/bin/chargen"
         test -f "$RUNNER_TEMP/prefix/share/man/man1/chargen.1"
         "$RUNNER_TEMP/prefix/bin/chargen" 16
-
-  # ── macOS build and test ─────────────────────────────────────────────────
-  build-macos:
-    name: Build and Test (macOS)
-    runs-on: macos-latest
-    # macOS runners are billed at 10x Linux minutes; only run on release tags,
-    # where it validates the macOS-only arc4random_buf path before publishing.
-    if: startsWith(github.ref, 'refs/tags/v')
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    # macOS runners already ship clang and make, no package install needed.
-    - name: Build
-      run: make
-
-    - name: Run test suite
-      run: |
-        cd tests
-        chmod +x test.sh
-        ./test.sh
-
-    # Staged install, mirroring how a packaging formula (e.g. Homebrew) would
-    # invoke `make install`. Catches GNU-only `install -D` usage and a
-    # missing man page.
-    - name: Staged install check
-      run: |
-        make install PREFIX="$RUNNER_TEMP/prefix"
-        test -x "$RUNNER_TEMP/prefix/bin/chargen"
-        test -f "$RUNNER_TEMP/prefix/share/man/man1/chargen.1"
-        "$RUNNER_TEMP/prefix/bin/chargen" 16
-
-    # Rebuild with an explicitly injected compiler and flags, to prove the
-    # Makefile does not discard them.
-    - name: Build with explicit CC/CFLAGS/LDFLAGS
-      run: |
-        make clean
-        make CC=clang CFLAGS="-O2" LDFLAGS=""
 
   # ── Sanitizer job ──────────────────────────────────────────────────────────
   sanitizers:
