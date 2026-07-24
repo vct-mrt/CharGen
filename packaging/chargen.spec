@@ -1,5 +1,5 @@
 Name:           chargen
-Version:        %{?pkgver}%{!?pkgver:1.0.1}
+Version:        %{?pkgver}%{!?pkgver:1.0.4}
 Release:        1%{?dist}
 Summary:        Random character generator
 
