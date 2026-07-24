@@ -170,7 +170,9 @@ jobs:
         mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
         git archive --format=tar.gz --prefix=chargen-${VER}/ HEAD -o ~/rpmbuild/SOURCES/chargen-${VER}.tar.gz
         cp packaging/chargen.spec ~/rpmbuild/SPECS/
-        rpmbuild -ba --define "pkgver ${VER}" ~/rpmbuild/SPECS/chargen.spec
+        # --nodeps: gcc/make are installed as .deb on the Ubuntu runner, not in
+        # the rpm database, so skip rpm's BuildRequires check (they are present).
+        rpmbuild -ba --nodeps --define "pkgver ${VER}" ~/rpmbuild/SPECS/chargen.spec
         mkdir -p dist
         find ~/rpmbuild/RPMS -name '*.rpm' -exec cp {} dist/ \;
 
