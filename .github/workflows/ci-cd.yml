@@ -66,6 +66,9 @@ jobs:
   build-macos:
     name: Build and Test (macOS)
     runs-on: macos-latest
+    # macOS runners are billed at 10x Linux minutes; only run on release tags,
+    # where it validates the macOS-only arc4random_buf path before publishing.
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
     - name: Checkout code

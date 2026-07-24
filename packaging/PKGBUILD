@@ -1,6 +1,6 @@
 # Maintainer: vct-mrt <martinetti.victor11@gmail.com>
 pkgname=chargen
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="Random character generator"
 arch=('x86_64' 'i686' 'aarch64' 'armv7h')

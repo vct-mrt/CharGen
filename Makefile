@@ -1,5 +1,5 @@
 # Makefile for CharGen
-VERSION = 1.0.0
+VERSION = 1.0.1
 DISTNAME = chargen-$(VERSION)
 
 SRC = 	src/main.c			\
