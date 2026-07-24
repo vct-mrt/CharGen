@@ -4,7 +4,7 @@
 static int is_valid_flag_char(char ch)
 {
     return (ch == 'n' || ch == 'c' || ch == 's' || ch == 'i' ||
-            ch == 'a' || ch == 'h' || ch == 'v');
+            ch == 'a');
 }
 
 int error(int ac, char **av)

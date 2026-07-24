@@ -19,7 +19,7 @@ test_command() {
     echo -n "Testing: $desc... "
 
     set +e
-    eval "$cmd" > /dev/null 2>&1
+    bash -c "$cmd" > /dev/null 2>&1
     actual_exit=$?
     set -e
 
@@ -44,7 +44,7 @@ test_output_matches() {
     echo -n "Testing: $desc... "
 
     set +e
-    output=$(eval "$cmd" 2>/dev/null | tr -d '\n')
+    output=$(bash -c "$cmd" 2>/dev/null | tr -d '\n')
     cmd_exit=$?
     set -e
 
@@ -75,7 +75,7 @@ test_output_not_matches() {
     echo -n "Testing: $desc... "
 
     set +e
-    output=$(eval "$cmd" 2>/dev/null | tr -d '\n')
+    output=$(bash -c "$cmd" 2>/dev/null | tr -d '\n')
     cmd_exit=$?
     set -e
 
@@ -106,7 +106,7 @@ test_length() {
     echo -n "Testing: $desc... "
 
     set +e
-    actual_len=$(eval "$cmd" 2>/dev/null | tr -d '\n' | wc -c)
+    actual_len=$(bash -c "$cmd" 2>/dev/null | tr -d '\n' | wc -c)
     cmd_exit=$?
     set -e
 
@@ -136,8 +136,8 @@ test_outputs_differ() {
     echo -n "Testing: $desc... "
 
     set +e
-    out1=$(eval "$cmd" 2>/dev/null | tr -d '\n')
-    out2=$(eval "$cmd" 2>/dev/null | tr -d '\n')
+    out1=$(bash -c "$cmd" 2>/dev/null | tr -d '\n')
+    out2=$(bash -c "$cmd" 2>/dev/null | tr -d '\n')
     set -e
 
     if [ "$out1" != "$out2" ]; then
@@ -162,7 +162,7 @@ test_stderr_contains() {
     echo -n "Testing: $desc... "
 
     set +e
-    stderr_out=$(eval "$cmd" 2>&1 >/dev/null)
+    stderr_out=$(bash -c "$cmd" 2>&1 >/dev/null)
     actual_exit=$?
     set -e
 
@@ -178,6 +178,28 @@ test_stderr_contains() {
         PASS=$((PASS + 1))
     else
         echo -e "${RED}FAIL${NC} (stderr '$stderr_out' did not contain '$substr')"
+        FAIL=$((FAIL + 1))
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# Helper: assert stderr is completely empty
+# Usage: test_stderr_empty "desc" "cmd"
+# ---------------------------------------------------------------------------
+test_stderr_empty() {
+    local desc="$1"
+    local cmd="$2"
+
+    echo -n "Testing: $desc... "
+
+    local err
+    err=$(bash -c "$cmd" 2>&1 >/dev/null)
+
+    if [ -z "$err" ]; then
+        echo -e "${GREEN}PASS${NC}"
+        PASS=$((PASS + 1))
+    else
+        echo -e "${RED}FAIL${NC} (stderr not empty: '$err')"
         FAIL=$((FAIL + 1))
     fi
 }
@@ -380,6 +402,17 @@ test_command \
     "--secure 10 exits 0 (flag accepted)" \
     "./chargen --secure 10" \
     0
+
+# ===========================================================================
+# Security hardening (Phase 2-3): count cap, RNG warning, empty-arg, flag clusters
+# ===========================================================================
+test_command "Count over MAX_COUNT rejected (10000001)" "./chargen 10000001" 84
+test_command "Count at MAX_COUNT accepted (10000000)" "./chargen 10000000" 0
+test_stderr_contains "Non-secure mode warns on stderr" "./chargen 8" "non-cryptographic" 0
+test_stderr_empty "Secure mode prints no RNG warning" "./chargen 8 --secure"
+test_length "Empty first arg skipped, count 16 used" "./chargen '' 16" 16
+test_command "-h inside cluster rejected (-ch)" "./chargen -ch 10" 84
+test_command "-v inside cluster rejected (-nv)" "./chargen -nv 10" 84
 
 # ===========================================================================
 # Summary

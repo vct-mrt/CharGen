@@ -1,7 +1,7 @@
 #!/bin/bash
 # Build script for creating packages for different distributions
 
-set -e
+set -euo pipefail
 
 VERSION="1.0.6"
 PKGNAME="chargen"
@@ -46,6 +46,11 @@ build_deb() {
         return 1
     fi
     
+    if [ -e debian ]; then
+        echo_error "./debian already exists; refusing to overwrite. Remove it and retry."
+        return 1
+    fi
+
     # Create debian directory in project root
     cp -r packaging/debian .
     # Ensure the stray root-level copy is removed even if the build fails
@@ -121,7 +126,7 @@ build_arch() {
 }
 
 # Main script
-case "$1" in
+case "${1:-}" in
     deb)
         create_tarball
         build_deb
