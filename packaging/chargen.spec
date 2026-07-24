@@ -1,5 +1,5 @@
 Name:           chargen
-Version:        %{?pkgver}%{!?pkgver:1.0.4}
+Version:        %{?pkgver}%{!?pkgver:1.0.6}
 Release:        1%{?dist}
 Summary:        Random character generator
 
@@ -28,7 +28,6 @@ Features:
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=%{buildroot} PREFIX=%{_prefix}
 
 %files
@@ -38,7 +37,7 @@ make install DESTDIR=%{buildroot} PREFIX=%{_prefix}
 %{_mandir}/man1/chargen.1*
 
 %changelog
-* Sat Dec 20 2025 vct-mrt <martinetti.victor11@gmail.com> - 1.0.0-1
+* Sat Dec 20 2025 vct-mrt <martinetti.victor11@gmail.com> - 1.0.6-1
 - Initial RPM release
 - Random character generator with multiple options
 - Support for numeric, alphabetic, and special characters

@@ -1,4 +1,4 @@
-chargen (1.0.0-1) unstable; urgency=medium
+chargen (1.0.6-1) unstable; urgency=medium
 
   * Initial Debian packaging.
 

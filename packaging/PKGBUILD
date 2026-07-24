@@ -1,6 +1,6 @@
 # Maintainer: vct-mrt <martinetti.victor11@gmail.com>
 pkgname=chargen
-pkgver=1.0.4
+pkgver=1.0.6
 pkgrel=1
 pkgdesc="Random character generator"
 arch=('x86_64' 'i686' 'aarch64' 'armv7h')
@@ -9,6 +9,8 @@ license=('GPL3')
 depends=('glibc')
 makedepends=('gcc' 'make')
 source=("${pkgname}-${pkgver}.tar.gz")
+# 'SKIP' is the untemplated default; packaging/build-package.sh injects the real
+# sha256 of the generated tarball into this line at build time before makepkg runs.
 sha256sums=('SKIP')
 
 build() {

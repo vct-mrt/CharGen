@@ -1,5 +1,5 @@
 # Makefile for CharGen
-VERSION = 1.0.4
+VERSION = 1.0.6
 DISTNAME = chargen-$(VERSION)
 
 SRC = 	src/main.c			\
@@ -11,10 +11,20 @@ SRC = 	src/main.c			\
 
 NAME = chargen
 CC ?= cc
-CPPFLAGS = -I include
 WARNFLAGS = -W -Wall -Wextra
 CFLAGS ?= -O2
-LDFLAGS =
+
+# Security hardening floor. `override` so it survives a command-line CFLAGS
+# override (CI's strict build) and is ADDED to any distro-provided
+# CPPFLAGS/LDFLAGS (dpkg-buildflags / rpm optflags) instead of clobbering them.
+# FORTIFY_SOURCE is added only when the compiler does not already predefine it:
+# Debian/Ubuntu/Fedora gcc inject -D_FORTIFY_SOURCE=2 at -O2 via specs, and a
+# second explicit define collides and breaks -Werror. Vanilla gcc (Arch), clang,
+# and Snap builds get the floor from us instead.
+FORTIFY := $(shell echo | $(CC) -O2 -dM -E - 2>/dev/null | grep -q _FORTIFY_SOURCE || echo -D_FORTIFY_SOURCE=2)
+override CPPFLAGS += -I include $(FORTIFY)
+override CFLAGS   += -fstack-protector-strong -fPIE
+override LDFLAGS  += -pie -Wl,-z,relro,-z,now
 
 # Installation directories
 PREFIX ?= /usr/local
@@ -31,18 +41,18 @@ $(NAME): $(SRC)
 
 install: $(NAME)
 	@echo "Installing $(NAME) to $(DESTDIR)$(BINDIR)"
-	mkdir -p $(DESTDIR)$(BINDIR)
-	install -m 0755 $(NAME) $(DESTDIR)$(BINDIR)/$(NAME)
+	mkdir -p "$(DESTDIR)$(BINDIR)"
+	install -m 0755 "$(NAME)" "$(DESTDIR)$(BINDIR)/$(NAME)"
 	@if [ -f "$(NAME).1" ]; then \
 		echo "Installing man page to $(DESTDIR)$(MANDIR)"; \
-		mkdir -p $(DESTDIR)$(MANDIR); \
-		install -m 0644 $(NAME).1 $(DESTDIR)$(MANDIR)/$(NAME).1; \
+		mkdir -p "$(DESTDIR)$(MANDIR)"; \
+		install -m 0644 "$(NAME).1" "$(DESTDIR)$(MANDIR)/$(NAME).1"; \
 	fi
 
 uninstall:
 	@echo "Uninstalling $(NAME) from $(DESTDIR)$(BINDIR)"
-	rm -f $(DESTDIR)$(BINDIR)/$(NAME)
-	rm -f $(DESTDIR)$(MANDIR)/$(NAME).1
+	rm -f "$(DESTDIR)$(BINDIR)/$(NAME)"
+	rm -f "$(DESTDIR)$(MANDIR)/$(NAME).1"
 
 clean:
 	rm -f $(NAME)

@@ -161,6 +161,20 @@ jobs:
           echo "Tag v$VER does not match code VERSION $CODEVER (include/random_char.h). Bump the header and commit before tagging."
           exit 1
         fi
+        # Guard against version drift across all packaging manifests.
+        MK_VER=$(grep -oP '^VERSION\s*=\s*\K[0-9]+\.[0-9]+\.[0-9]+' Makefile)
+        BP_VER=$(grep -oP '^VERSION="\K[0-9]+\.[0-9]+\.[0-9]+' packaging/build-package.sh)
+        PKG_VER=$(grep -oP '^pkgver=\K[0-9]+\.[0-9]+\.[0-9]+' packaging/PKGBUILD)
+        SPEC_VER=$(grep -oP '!\?pkgver:\K[0-9]+\.[0-9]+\.[0-9]+' packaging/chargen.spec)
+        DEB_VER=$(grep -oP '^chargen \(\K[0-9]+\.[0-9]+\.[0-9]+' packaging/debian/changelog)
+        MAN_VER=$(grep -oP 'CharGen \K[0-9]+\.[0-9]+\.[0-9]+' chargen.1)
+        for pair in "Makefile:$MK_VER" "build-package.sh:$BP_VER" "PKGBUILD:$PKG_VER" "chargen.spec:$SPEC_VER" "debian/changelog:$DEB_VER" "chargen.1:$MAN_VER"; do
+          name="${pair%%:*}"; val="${pair#*:}"
+          if [ "$val" != "$CODEVER" ]; then
+            echo "Version drift: $name has '$val' but include/random_char.h has '$CODEVER'. Sync all manifests before tagging."
+            exit 1
+          fi
+        done
         echo "VER=$VER" >> "$GITHUB_ENV"
 
     - name: Build Debian package

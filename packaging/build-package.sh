@@ -3,7 +3,7 @@
 
 set -e
 
-VERSION="1.0.4"
+VERSION="1.0.6"
 PKGNAME="chargen"
 BUILD_DIR="build"
 
@@ -106,7 +106,12 @@ build_arch() {
     # Copy PKGBUILD and source
     cp ../../packaging/PKGBUILD .
     cp "../${PKGNAME}-${VERSION}.tar.gz" .
-    
+
+    # Inject the real source checksum into the PKGBUILD copy (replaces SKIP)
+    # so makepkg verifies the tarball integrity instead of trusting it blindly.
+    _sha256=$(sha256sum "${PKGNAME}-${VERSION}.tar.gz" | awk '{print $1}')
+    sed -i "s/^sha256sums=.*/sha256sums=('${_sha256}')/" PKGBUILD
+
     # Build package
     makepkg -f
     
