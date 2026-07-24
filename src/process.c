@@ -10,6 +10,8 @@ int process(char *nbr, char **list, flags_t flags)
     int set_idx = -1;
     int nsets = my_tablen(list);
 
+    if (!flags.secure)
+        fprintf(stderr, "chargen: warning: using non-cryptographic RNG (rand()); pass --secure for passwords or secrets\n");
     while(i < ind) {
         if (flags.secure)
             set_idx = my_secure_random(nsets);
@@ -21,11 +23,25 @@ int process(char *nbr, char **list, flags_t flags)
             char_idx = my_secure_random(len);
         else
             char_idx = my_random(len);
-        printf("%c", charac[char_idx]);
-        if (i != 0 && i % LINE_WIDTH == 0)
-            printf("\n");
+        if (putchar(charac[char_idx]) == EOF) {
+            fprintf(stderr, "chargen: write error\n");
+            return 84;
+        }
+        if (i != 0 && i % LINE_WIDTH == 0) {
+            if (putchar('\n') == EOF) {
+                fprintf(stderr, "chargen: write error\n");
+                return 84;
+            }
+        }
         i++;
     }
-    printf("\n");
+    if (putchar('\n') == EOF) {
+        fprintf(stderr, "chargen: write error\n");
+        return 84;
+    }
+    if (fflush(stdout) == EOF) {
+        fprintf(stderr, "chargen: write error\n");
+        return 84;
+    }
     return 0;
 }

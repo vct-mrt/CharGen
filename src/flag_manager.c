@@ -81,6 +81,8 @@ int flag_manager(char **av)
             }
         }
     }
+    if (nbr == NULL)
+        return 84;
     list = init_list(flags);
     if (!flags.n && !flags.c && !flags.s)
         return process(nbr, create_tab(), flags);

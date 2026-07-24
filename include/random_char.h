@@ -10,6 +10,9 @@
     #include <stdbool.h>
     #define VERSION "1.0.6"
     #define LINE_WIDTH 100
+    /* Upper bound on the number of characters that can be generated in one run
+       (guards against resource-exhaustion when a huge count is requested). */
+    #define MAX_COUNT 10000000
     #define ALPHA_MIN "abcdefghijklmnopqrstuvwxyz"
     #define ALPHA_MAJ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     #define SPE_CHAR "!'#$%&()*+,-./:;<=>?@[\\]^_`{|}~"

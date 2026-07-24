@@ -82,5 +82,9 @@ int error(int ac, char **av)
         fprintf(stderr, "Error: Number must be positive\n");
         return 84;
     }
+    if (result > MAX_COUNT) {
+        fprintf(stderr, "Error: Number too large (max %d)\n", MAX_COUNT);
+        return 84;
+    }
     return 0;
 }

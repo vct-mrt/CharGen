@@ -19,7 +19,7 @@ static int fill_from_dev_urandom(void *buf, size_t len)
     ssize_t ret;
     int fd;
 
-    fd = open("/dev/urandom", O_RDONLY);
+    fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
     if (fd == -1)
         return -1;
     while (filled < len) {
@@ -75,12 +75,12 @@ int my_random(int nb)
 int my_secure_random(int nb)
 {
     unsigned int r;
-    unsigned int limit;
+    unsigned int min;
     unsigned char buf[4];
 
     if (nb <= 0)
         return 0;
-    limit = UINT_MAX - (UINT_MAX % (unsigned int)nb);
+    min = (0u - (unsigned int)nb) % (unsigned int)nb;
     do {
         if (fill_random_bytes(buf, sizeof(buf)) == -1) {
             fprintf(stderr, "chargen: secure RNG unavailable\n");
@@ -90,12 +90,14 @@ int my_secure_random(int nb)
           | ((unsigned int)buf[1] << 8)
           | ((unsigned int)buf[2] << 16)
           | ((unsigned int)buf[3] << 24);
-    } while (r > limit);
+    } while (r < min);
     return (int)(r % (unsigned int)nb);
 }
 
 bool is_nbr(char *nbr)
 {
+    if (nbr[0] == '\0')
+        return false;
     for (int i = 0; nbr[i] != '\0'; i++) {
         if (nbr[i] < 48 || nbr[i] > 57)
             return false;
@@ -119,7 +121,7 @@ bool str_compare(char *str1, char *str2)
 
 char *find_nbr(char **av)
 {
-    for (int i = 0; av[i] != NULL; i++) {
+    for (int i = 1; av[i] != NULL; i++) {
         if (is_nbr(av[i]))
             return av[i];
     }
