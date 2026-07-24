@@ -8,8 +8,7 @@
     #include <sys/types.h>
     #include <limits.h>
     #include <stdbool.h>
-    
-    #define VERSION "1.0.1"
+    #define VERSION "1.0.3"
     #define LINE_WIDTH 100
     #define ALPHA_MIN "abcdefghijklmnopqrstuvwxyz"
     #define ALPHA_MAJ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
