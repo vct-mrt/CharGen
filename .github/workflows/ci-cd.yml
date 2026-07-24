@@ -137,6 +137,9 @@ jobs:
     needs: [build-and-test, sanitizers, code-quality]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    # Required for softprops/action-gh-release to create the release (else 403).
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout code
