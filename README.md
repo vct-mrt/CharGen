@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml"><img src="https://github.com/vct-mrt/CharGen/actions/workflows/ci-cd.yml/badge.svg" alt="CI" /></a>
   <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3" /></a>
-  <a href="https://github.com/vct-mrt/CharGen/releases"><img src="https://img.shields.io/badge/version-1.0.5-green.svg" alt="Version" /></a>
+  <a href="https://github.com/vct-mrt/CharGen/releases"><img src="https://img.shields.io/badge/version-1.0.6-green.svg" alt="Version" /></a>
   <img src="https://img.shields.io/badge/language-C-blue.svg" alt="Language: C" />
 </p>
 
@@ -37,6 +37,8 @@ chargen -n 8              # 8 numeric chars          -> 42819537
 chargen -ncs 20 --secure  # 20 chars, crypto-secure  -> 7hQ!p2$Rk9#tW4mZ*eL
 ```
 
+> Generating a password or token? Always use `--secure` — the default `rand()` mode is fast but predictable.
+
 ## Installation
 
 ### Debian / Ubuntu (apt)
@@ -44,15 +46,22 @@ chargen -ncs 20 --secure  # 20 chars, crypto-secure  -> 7hQ!p2$Rk9#tW4mZ*eL
 ```bash
 sudo install -d -m 0755 /etc/apt/keyrings
 curl -fsSL https://vct-mrt.github.io/CharGen/apt/KEY.gpg | sudo tee /etc/apt/keyrings/chargen.gpg >/dev/null
+# Verify the key fingerprint before trusting it — abort if it differs.
+gpg --show-keys /etc/apt/keyrings/chargen.gpg
 echo 'deb [signed-by=/etc/apt/keyrings/chargen.gpg] https://vct-mrt.github.io/CharGen/apt stable main' | sudo tee /etc/apt/sources.list.d/chargen.list
 sudo apt update && sudo apt install chargen
 ```
+
+> **Expected signing-key fingerprint:** `<FINGERPRINT — fill via 'gpg --fingerprint <key-id>'>`
+> Compare the fingerprint shown by the command above (apt) or the dnf import prompt against this value before accepting the key.
 
 ### Fedora / RHEL (dnf)
 
 ```bash
 sudo dnf config-manager --add-repo https://vct-mrt.github.io/CharGen/rpm/chargen.repo
 sudo dnf install chargen
+# dnf will prompt to import the signing key — confirm the prompted
+# fingerprint matches the expected fingerprint noted above before accepting.
 ```
 
 The apt and dnf packages come from self-hosted, GPG-signed repositories

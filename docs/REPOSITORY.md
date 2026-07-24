@@ -25,12 +25,21 @@ Key-Length: 4096
 Key-Usage: sign
 Name-Real: CharGen Repository Signing Key
 Name-Email: martinetti.victor11@gmail.com
-Expire-Date: 0
+Expire-Date: 2y
 %commit
 EOF
 gpg --batch --generate-key /tmp/chargen-key.conf
 rm -f /tmp/chargen-key.conf
 ```
+
+The key expires automatically after 2 years (`Expire-Date: 2y`) rather than never,
+so a leaked key stops being trusted on its own instead of staying valid forever.
+Renew it before expiry with `gpg --edit-key <KEYID> expire`, then re-export the key,
+update the `GPG_PRIVATE_KEY` secret (section 1b), and re-run the publish workflow.
+Also generate a revocation certificate now, while the key is healthy, and store it
+offline: `gpg --gen-revoke <KEYID> > chargen-revoke.asc` — keep it somewhere safe
+and publish it (import it and push it to a keyserver) only if the key is ever
+suspected compromised.
 
 An ed25519 key works as well and produces smaller signatures; substitute
 `Key-Type: eddsa`, `Key-Curve: ed25519`, and drop `Key-Length` if you prefer it.
@@ -122,15 +131,25 @@ On some systems the `config-manager` subcommand is provided by the
 `dnf-plugins-core` package; install it first with `sudo dnf install dnf-plugins-core`
 if the command is not found.
 
+`dnf` will prompt to import the repository's GPG key on first install and show its
+fingerprint before accepting — confirm that fingerprint matches the expected value
+below before answering yes.
+
 ### 3b. Debian / Ubuntu / apt
 
 ```sh
 sudo install -d -m 0755 /etc/apt/keyrings
 curl -fsSL https://vct-mrt.github.io/CharGen/apt/KEY.gpg | sudo tee /etc/apt/keyrings/chargen.gpg >/dev/null
+# Verify the key fingerprint before trusting it (compare against the value
+# published by the maintainer below). Abort if it does not match exactly.
+gpg --show-keys /etc/apt/keyrings/chargen.gpg
 echo 'deb [signed-by=/etc/apt/keyrings/chargen.gpg] https://vct-mrt.github.io/CharGen/apt stable main' | sudo tee /etc/apt/sources.list.d/chargen.list
 sudo apt update
 sudo apt install chargen
 ```
+
+> **Expected signing-key fingerprint:** `<FINGERPRINT — maintainer: fill via 'gpg --fingerprint <key-id>' before publishing>`
+> Verify this over an independent channel (this repo's README + release notes) — do not trust it from a single source.
 
 Once configured, updates arrive with the normal `sudo apt upgrade` (Debian/Ubuntu)
 or `sudo dnf upgrade` (Fedora/RHEL).
@@ -149,7 +168,11 @@ or `sudo dnf upgrade` (Fedora/RHEL).
 - **Key rotation.** To rotate the signing key, generate a new key (section 1a),
   update the `GPG_PRIVATE_KEY` secret (section 1b), and re-run the workflow via its
   `workflow_dispatch` trigger to re-sign and redeploy. End users then re-fetch the
-  public key using the commands in section 3.
+  public key using the commands in section 3. If the rotation is because the key
+  is suspected compromised (not just routine renewal), publish the pre-generated
+  revocation certificate (`chargen-revoke.asc` from section 1a) and notify users
+  directly — a signed revocation is the only way existing keyrings learn the old
+  key is no longer trustworthy.
 - **Architecture.** The repositories currently publish `amd64` (x86_64) packages
   only, because the CI runners are x86_64. Supporting `arm64` would require adding
   an arm64 build to the packaging matrix.

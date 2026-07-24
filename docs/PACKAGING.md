@@ -97,8 +97,10 @@ cd /var/www/debian
 reprepro includedeb stable /path/to/chargen_1.0.0-1_amd64.deb
 
 # Les utilisateurs ajoutent le dépôt
-echo "deb [signed-by=/usr/share/keyrings/chargen-archive-keyring.gpg] http://your-domain.com/debian stable main" | sudo tee /etc/apt/sources.list.d/chargen.list
+echo "deb [signed-by=/usr/share/keyrings/chargen-archive-keyring.gpg] https://your-domain.com/debian stable main" | sudo tee /etc/apt/sources.list.d/chargen.list
 ```
+
+> Servez toujours le dépôt en HTTPS, même avec `signed-by=` : en HTTP, un attaquant sur le chemin peut altérer, rejouer ou downgrader les métadonnées du dépôt.
 
 ---
 

@@ -1,0 +1,11 @@
+# Code owners for CharGen. Enforced only when branch protection
+# "Require review from Code Owners" is enabled on main.
+# Catch-all: the maintainer owns everything by default.
+*                       @vct-mrt
+
+# Security-sensitive paths (explicit for emphasis).
+/.github/workflows/     @vct-mrt
+/packaging/             @vct-mrt
+/src/                   @vct-mrt
+/include/               @vct-mrt
+/SECURITY.md            @vct-mrt

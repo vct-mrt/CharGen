@@ -7,6 +7,7 @@ chargen \- random character generator
 .SH DESCRIPTION
 .B chargen
 generates random characters based on specified criteria. By default, it generates a mix of alphanumeric and special characters.
+By default the generator uses the non-cryptographic \fBrand\fR(3) PRNG, which is NOT suitable for passwords, tokens, or other secrets; pass \fB\-\-secure\fR for a cryptographically secure source.
 .SH OPTIONS
 .TP
 .BR \-h ", " \-\-help

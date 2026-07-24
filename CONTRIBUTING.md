@@ -55,6 +55,7 @@ Also update `CHANGELOG.md`: move items from `## [Unreleased]` to a new numbered 
 3. Use conventional commit messages (`fix:`, `feat:`, `docs:`, `chore:`, etc.).
 4. Fill in the PR description with what changed and why.
 5. One logical change per PR, keep diffs reviewable.
+6. Sign your commits (`git commit -S`, or configure `git config commit.gpgsign true`). Signed commits give reviewers cryptographic proof of authorship for a package that ships to end users.
 
 ## Reporting Bugs
 
